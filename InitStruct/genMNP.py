@@ -28,6 +28,7 @@ from ase.build import add_vacuum
 from ase.cluster.cubic import FaceCenteredCubic
 from ase.cluster import Octahedron, Decahedron, Icosahedron
 from ase.io.lammpsdata import write_lammps_data
+from ase.io.xyz import write_xyz
 from ase.visualize import view
 from constants import LMP_DATA_DIR, MNP_DIR, GOLDEN_RATIO, VACUUM_THICKNESS, eleDict, diameterList, shapeList
 
@@ -116,6 +117,11 @@ def writeMNP(element, diameter, latConst, shape, replace=False, vis=False):
 
     if not isdir(f"{LMP_DATA_DIR}/{MNP_DIR}"): mkdir(f"{LMP_DATA_DIR}/{MNP_DIR}")
     write_lammps_data(f"{LMP_DATA_DIR}/{MNP_DIR}/{fileName}", atoms=mnp, units='metal', atom_style='atomic')
+    fileName = f"{element}{diameter}{shape}.xyz"
+    xyzFile = open(f"{LMP_DATA_DIR}/{MNP_DIR}/{fileName}", 'w')
+    write_xyz(xyzFile, [mnp])
+    xyzFile.close()
+
     print(f"      Generated {fileName}, diameter: {boxSize[0]:.1f} A^3, size: {mnp.get_global_number_of_atoms()} atoms")
     if vis: view(mnp)
 
@@ -141,6 +147,10 @@ def writeMNP_sphere(element, diameter, latConst, replace=False, vis=False):
     # Write atoms structure to a lmp file and create file if not exists
     if not isdir(f"{LMP_DATA_DIR}/{MNP_DIR}"): mkdir(f"{LMP_DATA_DIR}/{MNP_DIR}")
     write_lammps_data(f"{LMP_DATA_DIR}/{MNP_DIR}/{fileName}", atoms=mnp, units='metal', atom_style='atomic')
+    fileName = f"{element}{diameter}SP.xyz"
+    xyzFile = open(f"{LMP_DATA_DIR}/{MNP_DIR}/{fileName}", 'w')
+    write_xyz(xyzFile, [mnp])
+    xyzFile.close()
 
     print(f"      Generated {fileName}, diameter: {boxSize[0]:.1f} A^3, size: {mnp.get_global_number_of_atoms()} atoms")
     if vis: view(mnp)
@@ -150,15 +160,15 @@ def main(replace=False, vis=False):
     if not isdir(LMP_DATA_DIR): mkdir(LMP_DATA_DIR)
     print(f"Generating NPs with {VACUUM_THICKNESS} Angstrom of vacuum on each dimension:")
     for diameter in diameterList:
-        # if diameter != 20:  continue  # DEBUG
         print(f"\n  Size {diameter} Angstrom for:")
         for element in eleDict:
-            # if element is not 'Au':  continue  # DEBUG
+            if element != 'Pd': 
+                continue
             print(f"    Element {element}:")
             latConst = eleDict[element]['lc']['FCC']
             for shape in shapeList:
-                # if shape is not 'IC':  continue  # DEBUG
-                writeMNP_sphere(element, diameter, latConst, replace=replace, vis=vis)
+                writeMNP(element, diameter, latConst, shape, replace=replace, vis=vis)
+                # writeMNP_sphere(element, diameter, latConst, replace=replace, vis=vis)
             
 
 if __name__ == '__main__':

@@ -21,8 +21,8 @@ eleDict = {'Pd':
             {'lc': {'FCC': 3.92}}, 
            'Au': 
             {'lc': {'FCC': 4.09}}}
-diameterList = [10, 15, 20, 25, 30]  # NP diameters of interest (Angstrom)
-shapeList = ['SP']  # Shapes of interest 
+diameterList = [1200, 1300]  # NP diameters of interest (Angstrom)
+shapeList = ['OT']  # Shapes of interest 
 BNPdistribList = ['L10', 'RAL']  # BNP distributions of interest
 TNPdistribList = ['L10R', 'RRAL', 'LL10']  # TNP distributions of interest
 ratioList = [20, 40, 60, 80]  # Ratios of interest
