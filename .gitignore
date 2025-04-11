@@ -1,4 +1,4 @@
-InitStruct/__pycache__/
+__pycache__
 InitStruct/*NP/
 InitStruct/*log*
 MDsim/*.log
