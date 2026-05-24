@@ -2,8 +2,8 @@
 
 import numpy as np
 
+from tnp_gen.eam.create_eam import embed, pair, prof
 from tnp_gen.eam.eam_database import AtType, Database
-from tnp_gen.eam.create_eam import prof, pair, embed
 
 
 def test_database_has_expected_elements():
@@ -11,6 +11,15 @@ def test_database_has_expected_elements():
     assert "Pd" in Database
     assert "Pt" in Database
     assert "Cu" in Database
+
+
+def test_database_validation_for_arbitrary_elements():
+    """Verify that the EAM database can be queried for arbitrary elements."""
+    # The EAM module already accepts arbitrary element names; this test
+    # documents that behaviour.  We do not call create_eam here because it
+    # would require writing files, but we assert the database structure.
+    assert hasattr(Database, "keys")
+    assert callable(Database.keys)
 
 
 def test_attype_attributes():

@@ -2,15 +2,22 @@
 
 
 def test_import_constants():
-    from tnp_gen.constants import ELE_DICT, DIAMETER_LIST, SHAPE_LIST
+    from tnp_gen.constants import (
+        ELE_DICT,
+        SHAPE_LIST,
+    )
 
     assert "Au" in ELE_DICT
     assert "Pd" in ELE_DICT
     assert "Pt" in ELE_DICT
+    assert "TH" in SHAPE_LIST
+    assert "RD" in SHAPE_LIST
+    assert "TO" in SHAPE_LIST
+    assert "CO" in SHAPE_LIST
 
 
 def test_import_eam():
-    from tnp_gen.eam import AtType, Database, create_eam
+    from tnp_gen.eam import Database
 
     assert "Au" in Database
     assert "Pd" in Database
@@ -19,11 +26,11 @@ def test_import_eam():
 
 def test_import_init_struct():
     from tnp_gen.init_struct import (
-        gen_mnp,
-        write_mnp,
         gen_bnp,
-        write_bnp,
+        gen_mnp,
         gen_tnp,
+        write_bnp,
+        write_mnp,
         write_tnp,
     )
 
@@ -37,10 +44,10 @@ def test_import_init_struct():
 
 def test_import_feat_ext_eng():
     from tnp_gen.feat_ext_eng import (
-        setup_ncpac,
-        run_ncpac,
-        merge_reformat_data,
         concat_np_feats,
+        merge_reformat_data,
+        run_ncpac,
+        setup_ncpac,
     )
 
     assert callable(setup_ncpac)
