@@ -1,8 +1,8 @@
 # tnp-gen
 
-Toolkit for generating trimetallic nanoparticle (TNP) structural datasets for machine learning applications.
+Toolkit for generating monometallic to trimetallic nanoparticle structural datasets for machine learning applications.
 
-This repository was originally developed for generation of AuPtPd trimetallic nanoparticles.
+This repository was originally developed for generation of AuPtPd trimetallic nanoparticles, but has been generalised to support arbitrary metallic elements (1–3 elements).
 
 * Conducted by: Kaihan Lu assisted by Haotai Peng (Bill)
 * Supervised by: Jonathan Yik Chang Ting and Amanda Barnard
@@ -58,6 +58,7 @@ tnp-gen init-struct --stage bnp --replace
 
 - `tnp_gen.eam` — EAM (Embedded Atom Method) potential file creation
 - `tnp_gen.init_struct` — Initial nanoparticle structure generation (monometallic, bimetallic, trimetallic)
+- `tnp_gen.md_sim` — Molecular dynamics simulation pipeline (LAMMPS input generation, job management)
 - `tnp_gen.feat_ext_eng` — Feature extraction and dataset engineering (NCPac integration)
 
 ---
@@ -74,12 +75,12 @@ tnp-gen init-struct --stage bnp --replace
     - only generate TNPs with different combinations of the listed degrees of freedom, but extension is possible by appropriate modification of the code.
     - be run on high performance computing cluster such as Gadi of National Computational Infrastructure or cluster1 of ANU College of Engineering and Computer Science.
 
-## Degrees of freedom of TNPs generated
-- Elemental composition: Au, Pt, Pd
-- Size: 30 Angstroms
-- Shape: Spherical
-- Ratio: i:j:k where i, j, k are from {2, 4, 6, 8}, with an additional constraint if i+j+k == 10
-- Atomic ordering: (chosen with reference to Figure 2 in the review by Crawley et al, Heterogenous Trimetallic Nanoparticles as Catalysts, Chem. Rev. 2022, 122, 6, 6795--6849)
+## Degrees of freedom of nanoparticles generated
+- **Elemental composition:** Configurable (default: Au, Pt, Pd). Supports 1–3 arbitrary metallic elements.
+- **Size:** Configurable diameter list (default: 10, 15, 20, 25, 30 Å)
+- **Shape:** Cube (CU), Tetrahedron (TH), Rhombic Dodecahedron (RD), Octahedron (OT), Truncated Octahedron (TO), Cuboctahedron (CO), Decahedron (DH), Icosahedron (IC), Sphere (SP)
+- **Ratio:** i:j:k where i, j, k are from {20, 40, 60, 80}, with constraint i+j+k == 100
+- **Atomic ordering (TNP):**
     - L10R: ordered alloy with randomly distributed M3 (o-M1M2-M3)
     - CS: inner-core@core@shell (M1@M2@M3)
     - CL10S: ordered-core@shell (o-M1M2@M3)
