@@ -1,4 +1,4 @@
-# tnp-gen
+# np-gen
 
 Toolkit for generating monometallic to trimetallic nanoparticle structural datasets for machine learning applications.
 
@@ -18,8 +18,8 @@ This package uses [uv](https://docs.astral.sh/uv/) for dependency management and
 
 ```bash
 # Clone the repository
-git clone https://github.com/jonathan-ting/tnp-gen.git
-cd tnp-gen
+git clone https://github.com/jonathan-ting/np-gen.git
+cd np-gen
 
 # Create a virtual environment and install dependencies
 uv venv
@@ -36,30 +36,30 @@ pip install -e ".[dev]"
 
 ## CLI Usage
 
-After installation, the `tnp-gen` command is available:
+After installation, the `np-gen` command is available:
 
 ```bash
 # Create EAM potential files
-tnp-gen eam -n Au Pt Pd
+np-gen eam -n Au Pt Pd
 
 # Generate initial structures (all stages)
-tnp-gen init-struct --stage all
+np-gen init-struct --stage all
 
 # Generate only monometallic nanoparticles
-tnp-gen init-struct --stage mnp
+np-gen init-struct --stage mnp
 
 # Generate bimetallic nanoparticles with overwrite
-tnp-gen init-struct --stage bnp --replace
+np-gen init-struct --stage bnp --replace
 ```
 
 ---
 
 ## Package structure
 
-- `tnp_gen.eam` — EAM (Embedded Atom Method) potential file creation
-- `tnp_gen.init_struct` — Initial nanoparticle structure generation (monometallic, bimetallic, trimetallic)
-- `tnp_gen.md_sim` — Molecular dynamics simulation pipeline (LAMMPS input generation, job management)
-- `tnp_gen.feat_ext_eng` — Feature extraction and dataset engineering (NCPac integration)
+- `np_gen.eam` — EAM (Embedded Atom Method) potential file creation
+- `np_gen.init_struct` — Initial nanoparticle structure generation (monometallic, bimetallic, trimetallic)
+- `np_gen.md_sim` — Molecular dynamics simulation pipeline (LAMMPS input generation, job management)
+- `np_gen.feat_ext_eng` — Feature extraction and dataset engineering (NCPac integration)
 
 ---
 

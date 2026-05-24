@@ -1,6 +1,6 @@
-# Welcome to tnp-gen
+# Welcome to np-gen
 
-`tnp-gen` is a toolkit for generating monometallic to trimetallic nanoparticle structural datasets for machine learning.
+`np-gen` is a toolkit for generating monometallic to trimetallic nanoparticle structural datasets for machine learning.
 
 ## Key Features
 
@@ -14,13 +14,13 @@
 
 ```bash
 # Generate structures (all stages: MNP, BNP, CS, TNP)
-tnp-gen init-struct --stage all
+np-gen init-struct --stage all
 
 # Or generate only monometallic nanoparticles
-tnp-gen init-struct --stage mnp
+np-gen init-struct --stage mnp
 
 # Setup MD simulations
-tnp-gen md-sim setup --init-dir InitStruct/TNP --target-dir MDsim_runs
+np-gen md-sim setup --init-dir InitStruct/TNP --target-dir MDsim_runs
 ```
 
 For more details, see the [Installation](installation.md) and [Usage](usage.md) guides.

@@ -1,6 +1,6 @@
 # Installation
 
-To install `tnp-gen`, follow these steps:
+To install `np-gen`, follow these steps:
 
 ## Prerequisites
 
@@ -14,8 +14,8 @@ To install `tnp-gen`, follow these steps:
 Clone the repository and install it in editable mode:
 
 ```bash
-git clone https://github.com/jonathanyct/tnp-gen.git
-cd tnp-gen
+git clone https://github.com/jonathanyct/np-gen.git
+cd np-gen
 pip install -e .
 ```
 

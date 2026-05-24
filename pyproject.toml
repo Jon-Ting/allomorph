@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "tnp-gen"
+name = "np-gen"
 version = "0.1.0"
 description = "Toolkit for generating monometallic to trimetallic nanoparticle structural datasets for machine learning."
 
@@ -52,14 +52,14 @@ dev = [
 ]
 
 [project.scripts]
-tnp-gen = "tnp_gen.cli:main"
+np-gen = "np_gen.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/jonathan-ting/tnp-gen"
-"Bug Tracker" = "https://github.com/jonathan-ting/tnp-gen/issues"
+Homepage = "https://github.com/jonathan-ting/np-gen"
+"Bug Tracker" = "https://github.com/jonathan-ting/np-gen/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/tnp_gen"]
+packages = ["src/np_gen"]
 
 [tool.hatch.build.targets.sdist]
 include = [
