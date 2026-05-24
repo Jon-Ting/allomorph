@@ -13,6 +13,7 @@ Note:
     - Perhaps could add a parameter to control core thickness
 """
 
+from multiprocessing import Pool
 from pathlib import Path
 
 import numpy as np
@@ -37,12 +38,7 @@ from np_gen.constants import (
 
 
 def rand_conv(obj, element1, element2, element3, ele1Ratio, ele2Ratio, ele3Ratio, rseed, prob):
-    """Randomly convert elements of atoms until specified ratio is reached.
-
-    If *prob* is provided, atoms are preferentially chosen for conversion
-    according to the supplied probability array (higher probability = more
-    likely to be converted).
-    """
+    """Randomly convert elements of atoms until specified ratio is reached."""
     ele1Arr, ele2Arr, ele3Arr = obj.symbols.search(element1), obj.symbols.search(element2), obj.symbols.search(element3)
     ele1IdealNum, ele2IdealNum, ele3IdealNum = round(ele1Ratio / 100 * len(obj)), round(ele2Ratio / 100 * len(obj)), round(ele3Ratio / 100 * len(obj))
     diff1, diff2, diff3 = len(ele1Arr) - ele1IdealNum, len(ele2Arr) - ele2IdealNum, len(ele3Arr) - ele3IdealNum
@@ -88,7 +84,7 @@ def rand_conv(obj, element1, element2, element3, ele1Ratio, ele2Ratio, ele3Ratio
 
 def _prob_array(prob, indices):
     """Return a normalised probability array for *indices* or None."""
-    if not prob:
+    if prob is None or len(prob) == 0:
         return None
     arr = np.array(prob)[indices]
     s = arr.sum()
@@ -135,19 +131,7 @@ def gen_tnp(obj, element1, element2, element3, ele1Ratio, ele2Ratio, ele3Ratio, 
 
 
 def _map_tnp_distribution(distrib1, distrib2):
-    """Map a (distrib1, distrib2) pair to the canonical TNP distribution name.
-
-    The mapping follows the nomenclature in the legacy README:
-        L10 + RAL  → L10R   (ordered alloy, random M3)
-        L10 + L10  → LL10   (fully ordered)
-        L10 + RCS  → CL10S  (ordered core, M3 shell)
-        RAL + RAL  → RRAL   (fully random)
-        RAL + RCS  → CRALS  (random core, M3 shell)
-        RAL + L10  → CRSR   (random core, ordered shell) - Map to CRSR to complete set
-        RCS + RAL  → CSRAL  (M1 core, random M2M3 shell)
-        RCS + L10  → CSL10  (M1 core, ordered M2M3 shell)
-        RCS + RCS  → CS     (M1@M2@M3 core-shell)
-    """
+    """Map a (distrib1, distrib2) pair to the canonical TNP distribution name."""
     mapping = {
         ('L10', 'RAL'): 'L10R',
         ('L10', 'L10'): 'LL10',
@@ -163,8 +147,7 @@ def _map_tnp_distribution(distrib1, distrib2):
     if key in mapping:
         return mapping[key]
     raise ValueError(
-        f"No TNP distribution mapping for ({distrib1}, {distrib2}). "
-        f"Supported keys: {list(mapping.keys())}"
+        f"No TNP distribution mapping for ({distrib1}, {distrib2})."
     )
 
 
@@ -178,15 +161,14 @@ def write_tnp(element1, element2, element3, diameter, shape, ele1Ratio, ele2Rati
 
     # Get input file name and read data from previous generated file
     if distrib1 == 'L10':
-        bnpRatio1, bnpRatio2, rep1_val, bnp_dist_name = 50, 50, '', BNP_DISTRIB_LIST[0]
+        bnpRatio1, bnpRatio2, rep1_val, bnp_dist_name = 50, 50, '', 'L10'
     else:
-        bnpRatio1, bnpRatio2, rep1_val, bnp_dist_name = 100 - ele2Ratio, ele2Ratio, rep1, BNP_DISTRIB_LIST[1]
+        bnpRatio1, bnpRatio2, rep1_val, bnp_dist_name = 100 - ele2Ratio, ele2Ratio, rep1, distrib1
 
     if distrib1 == 'L10' and distrib2 == 'L10':
         file_name_mnp = f"{element1}{diameter}{shape}.lmp"
         mnp_path = mnp_dir / file_name_mnp
         if not mnp_path.exists():
-            print(f"          MNP file {mnp_path} not found, skipping...")
             return
         bnp = read_lammps_data(str(mnp_path), style='atomic', units='metal')
         bnp.set_chemical_symbols(symbols=[element1] * len(bnp))
@@ -194,10 +176,14 @@ def write_tnp(element1, element2, element3, diameter, shape, ele1Ratio, ele2Rati
         file_name_bnp = f"{element1}{element2}{diameter}{shape}{bnpRatio1}{bnpRatio2}{distrib1}{rep1_val}.lmp"
         bnp_path = bnp_dir / bnp_dist_name / file_name_bnp
         if not bnp_path.exists():
-            print(f"          BNP file {bnp_path} not found, skipping...")
             return
         bnp = read_lammps_data(str(bnp_path), style='atomic', units='metal')
-        bnp.set_chemical_symbols(symbols=[element1 if bnp.arrays['type'][i] == 1 else element2 for i in range(bnp.arrays['type'].size)])
+        # Map atom types back to symbols for processing
+        symbols = []
+        for i in range(len(bnp)):
+            atype = bnp.arrays['type'][i]
+            symbols.append(element1 if atype == 1 else element2)
+        bnp.set_chemical_symbols(symbols)
 
     tnp_dist_name = _map_tnp_distribution(distrib1, distrib2)
     distrib_dir = output_base_dir / tnp_dist_name
@@ -213,10 +199,9 @@ def write_tnp(element1, element2, element3, diameter, shape, ele1Ratio, ele2Rati
         output_path = distrib_dir / file_name_tnp
 
         if not replace and output_path.exists():
-            print(f"          {file_name_tnp} already exists, skipping...")
-            return
+            continue
 
-        tnp = gen_tnp(bnp, element1, element2, element3, ele1Ratio, ele2Ratio, ele3Ratio, distrib1, distrib2, rep2, shape=shape, ele_dict=ele_dict)
+        tnp = gen_tnp(bnp.copy(), element1, element2, element3, ele1Ratio, ele2Ratio, ele3Ratio, distrib1, distrib2, rep2, shape=shape, ele_dict=ele_dict)
         write_lammps_data(str(output_path), atoms=tnp, units='metal', atom_style='atomic')
         print(f"          Generated {file_name_tnp}, formula: {tnp.get_chemical_formula()}")
 
@@ -230,9 +215,10 @@ def main(replace=False, vis=False, ele_dict=None):
     """Main entry point for TNP generation."""
     if ele_dict is None:
         ele_dict = ELE_DICT
-    print('Generating TNP alloys of:')
+    print('Generating TNP alloys:')
+    
+    work_items = []
     for diameter in DIAMETER_LIST:
-        print(f"\n  Size {diameter} Angstrom for:")
         for element1 in ele_dict:
             for element2 in ele_dict:
                 if element1 == element2:
@@ -240,34 +226,22 @@ def main(replace=False, vis=False, ele_dict=None):
                 for element3 in ele_dict:
                     if element3 == element1 or element3 == element2:
                         continue
-                    print(f"    Element 1: {element1}, Element 2: {element2}, Element 3: {element3}")
                     for shape in SHAPE_LIST:
                         for ratio1 in RATIO_LIST:
                             for ratio2 in RATIO_LIST:
                                 ratio3 = 100 - ratio1 - ratio2
                                 if ratio3 <= 0 or sum((ratio1, ratio2, ratio3)) != 100:
                                     continue
-                                print(f"      Ratio1: {ratio1}, Ratio 2: {ratio2}, Ratio 3: {ratio3}")
                                 for distrib1 in BNP_DISTRIB_LIST:
                                     for distrib2 in BNP_DISTRIB_LIST:
                                         for rep1 in range(RANDOM_DISTRIB_NO):
-                                            print(f"        Distrib 1: {distrib1}, Distrib 2: {distrib2}")
-                                            write_tnp(
-                                                element1=element1,
-                                                element2=element2,
-                                                element3=element3,
-                                                diameter=diameter,
-                                                shape=shape,
-                                                ele1Ratio=ratio1,
-                                                ele2Ratio=ratio2,
-                                                ele3Ratio=ratio3,
-                                                distrib1=distrib1,
-                                                distrib2=distrib2,
-                                                rep1=rep1,
-                                                replace=replace,
-                                                vis=vis,
-                                                ele_dict=ele_dict,
-                                            )
+                                            work_items.append((element1, element2, element3, diameter, shape, ratio1, ratio2, ratio3, distrib1, distrib2, rep1, replace, vis, ele_dict))
+
+    if len(work_items) > 1:
+        with Pool() as p:
+            p.starmap(write_tnp, work_items)
+    elif work_items:
+        write_tnp(*work_items[0])
 
 
 if __name__ == '__main__':

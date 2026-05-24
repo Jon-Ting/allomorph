@@ -48,6 +48,7 @@ TNP_DISTRIB_LIST = [
     "L10R", "CS", "CL10S", "CRALS", "RRAL", "CSRAL", "CSL10", "CRSR", "LL10"
 ]  # TNP distributions of interest
 RATIO_LIST = [20, 40, 60, 80]  # Ratios of interest
+CUSTOM_SHAPES = {}  # User-defined custom shapes
 
 
 def update_constants(config):
@@ -76,6 +77,9 @@ def update_constants(config):
         TNP_DISTRIB_LIST[:] = config["TNP_DISTRIB_LIST"]
     if "RATIO_LIST" in config:
         RATIO_LIST[:] = config["RATIO_LIST"]
+    if "CUSTOM_SHAPES" in config:
+        CUSTOM_SHAPES.clear()
+        CUSTOM_SHAPES.update(config["CUSTOM_SHAPES"])
 
 
 def load_config(path):

@@ -13,6 +13,7 @@ Note:
     - Perhaps could add a parameter to control core thickness
 """
 
+from multiprocessing import Pool
 from pathlib import Path
 
 import numpy as np
@@ -90,69 +91,71 @@ def gen_bnp(obj, element2, shape, ratio2, distrib, rseed, ele_dict=None):
     return obj
 
 
-def write_bnp(element1, diameter, shape, ratio2, distrib, replace=False, vis=False, ele_dict=None):
-    """Generates and writes BNP alloy structures."""
+def write_bnp(element1, element2, diameter, shape, ratio2, distrib, replace=False, vis=False, ele_dict=None):
+    """Generates and writes a specific BNP alloy structure."""
     if ele_dict is None:
         ele_dict = ELE_DICT
     output_base_dir = Path(LMP_DATA_DIR) / BNP_DIR
     mnp_dir = Path(LMP_DATA_DIR) / MNP_DIR
 
-    for element2 in ele_dict:
-        if element2 == element1:
+    file_name_mnp = f"{element1}{diameter}{shape}.lmp"
+    mnp_path = mnp_dir / file_name_mnp
+
+    if not mnp_path.exists():
+        # print(f"      MNP file {mnp_path} not found, skipping...")
+        return
+
+    mnp = read_lammps_data(str(mnp_path), style='atomic', units='metal')
+    mnp.set_chemical_symbols(symbols=[element1] * len(mnp))
+    ratio1 = 100 - ratio2
+
+    distrib_dir = output_base_dir / distrib
+    distrib_dir.mkdir(parents=True, exist_ok=True)
+
+    for rep in range(RANDOM_DISTRIB_NO):
+        if 'R' not in distrib:
+            r1, r2, rep_suffix = 50, 50, ''
+        else:
+            r1, r2, rep_suffix = ratio1, ratio2, str(rep)
+
+        file_name_bnp = f"{element1}{element2}{diameter}{shape}{r1}{r2}{distrib}{rep_suffix}.lmp"
+        output_path = distrib_dir / file_name_bnp
+
+        if not replace and output_path.exists():
             continue
 
-        file_name_mnp = f"{element1}{diameter}{shape}.lmp"
-        mnp_path = mnp_dir / file_name_mnp
+        bnp = gen_bnp(obj=mnp.copy(), element2=element2, shape=shape, ratio2=ratio2, distrib=distrib, rseed=rep if 'R' in distrib else 0, ele_dict=ele_dict)
+        write_lammps_data(str(output_path), atoms=bnp, units='metal', atom_style='atomic')
+        print(f"      Generated {file_name_bnp}, formula: {bnp.get_chemical_formula()}")
 
-        if not mnp_path.exists():
-            print(f"      MNP file {mnp_path} not found, skipping...")
-            continue
-
-        mnp = read_lammps_data(str(mnp_path), style='atomic', units='metal')
-        mnp.set_chemical_symbols(symbols=[element1] * len(mnp))
-        ratio1 = 100 - ratio2
-
-        distrib_dir = output_base_dir / distrib
-        distrib_dir.mkdir(parents=True, exist_ok=True)
-
-        for rep in range(RANDOM_DISTRIB_NO):
-            if 'R' not in distrib:
-                ratio1, ratio2, rep_suffix = 50, 50, ''
-            else:
-                rep_suffix = str(rep)
-
-            file_name_bnp = f"{element1}{element2}{diameter}{shape}{ratio1}{ratio2}{distrib}{rep_suffix}.lmp"
-            output_path = distrib_dir / file_name_bnp
-
-            if not replace and output_path.exists():
-                print(f"      {file_name_bnp} already exists, skipping...")
-                continue
-
-            bnp = gen_bnp(obj=mnp.copy(), element2=element2, shape=shape, ratio2=ratio2, distrib=distrib, rseed=rep if 'R' in distrib else 0, ele_dict=ele_dict)
-            write_lammps_data(str(output_path), atoms=bnp, units='metal', atom_style='atomic')
-            print(f"      Generated {file_name_bnp}, formula: {bnp.get_chemical_formula()}")
-
-            if vis:
-                view(bnp)
-            if 'R' not in distrib:
-                break
+        if vis:
+            view(bnp)
+        if 'R' not in distrib:
+            break
 
 
 def main(replace=False, vis=False, ele_dict=None):
     """Main entry point for BNP generation."""
     if ele_dict is None:
         ele_dict = ELE_DICT
-    print('Generating BNP alloys of:')
+    print('Generating BNP alloys:')
+
+    work_items = []
     for diameter in DIAMETER_LIST:
-        print(f"\n  Size {diameter} Angstrom for:")
         for element in ele_dict:
-            print(f"    Element: {element}")
-            for shape in SHAPE_LIST:
-                print(f"    Shape: {shape}")
-                for ratio2 in RATIO_LIST:
-                    print(f"    Element 2 Ratio: {ratio2}")
-                    for distrib in BNP_DISTRIB_LIST:
-                        write_bnp(element1=element, diameter=diameter, shape=shape, ratio2=ratio2, distrib=distrib, replace=replace, vis=vis, ele_dict=ele_dict)
+            for element2 in ele_dict:
+                if element == element2:
+                    continue
+                for shape in SHAPE_LIST:
+                    for ratio2 in RATIO_LIST:
+                        for distrib in BNP_DISTRIB_LIST:
+                            work_items.append((element, element2, diameter, shape, ratio2, distrib, replace, vis, ele_dict))
+
+    if len(work_items) > 1:
+        with Pool() as p:
+            p.starmap(write_bnp, work_items)
+    elif work_items:
+        write_bnp(*work_items[0])
 
 
 if __name__ == '__main__':
