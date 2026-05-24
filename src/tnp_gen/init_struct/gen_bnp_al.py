@@ -32,8 +32,6 @@ from tnp_gen.constants import (
     SHAPE_LIST,
     VACUUM_THICKNESS,
     calc_rcs_prob,
-    dist_1d,
-    dist_3d,
 )
 
 

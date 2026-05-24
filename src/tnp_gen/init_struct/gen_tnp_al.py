@@ -33,8 +33,6 @@ from tnp_gen.constants import (
     TNP_DIR,
     VACUUM_THICKNESS,
     calc_rcs_prob,
-    dist_1d,
-    dist_3d,
 )
 
 
