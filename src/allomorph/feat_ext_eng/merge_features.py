@@ -9,7 +9,7 @@ from os.path import exists
 
 import pandas as pd
 
-from np_gen.constants import ELE_DICT, parse_ele_comb
+from allomorph.constants import ELE_DICT, parse_ele_comb
 
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,6 @@
-from np_gen.md_sim.generator import generate_lammps_input
-from np_gen.md_sim.manager import generate_job_list, get_config_value, update_config
-from np_gen.md_sim.setup import setup_md_sim
+from allomorph.md_sim.generator import generate_lammps_input
+from allomorph.md_sim.manager import generate_job_list, get_config_value, update_config
+from allomorph.md_sim.setup import setup_md_sim
 
 
 def test_setup_md_sim(tmp_path):

@@ -1,14 +1,14 @@
 """
-Basic workflow example for np-gen.
+Basic workflow example for allomorph.
 
-This script demonstrates how to use the np-gen library to generate
+This script demonstrates how to use the allomorph library to generate
 monometallic, bimetallic, and trimetallic nanoparticles with arbitrary elements.
 """
 
-from np_gen.constants import ELE_DICT, update_constants, validate_ele_dict
-from np_gen.init_struct.gen_bnp_al import gen_bnp
-from np_gen.init_struct.gen_mnp import gen_mnp
-from np_gen.init_struct.gen_tnp_al import gen_tnp
+from allomorph.constants import ELE_DICT, update_constants, validate_ele_dict
+from allomorph.init_struct.gen_bnp_al import gen_bnp
+from allomorph.init_struct.gen_mnp import gen_mnp
+from allomorph.init_struct.gen_tnp_al import gen_tnp
 
 
 def main():

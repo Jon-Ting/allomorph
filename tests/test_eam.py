@@ -2,8 +2,8 @@
 
 import numpy as np
 
-from np_gen.eam.create_eam import embed, pair, prof
-from np_gen.eam.eam_database import AtType, Database
+from allomorph.eam.create_eam import embed, pair, prof
+from allomorph.eam.eam_database import AtType, Database
 
 
 def test_database_has_expected_elements():

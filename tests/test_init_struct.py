@@ -2,10 +2,10 @@
 
 import pytest
 
-from np_gen.constants import ELE_DICT
-from np_gen.init_struct.gen_bnp_al import gen_bnp
-from np_gen.init_struct.gen_mnp import gen_mnp
-from np_gen.init_struct.gen_tnp_al import gen_tnp
+from allomorph.constants import ELE_DICT
+from allomorph.init_struct.gen_bnp_al import gen_bnp
+from allomorph.init_struct.gen_mnp import gen_mnp
+from allomorph.init_struct.gen_tnp_al import gen_tnp
 
 
 def test_gen_mnp_creates_atoms():
@@ -56,7 +56,7 @@ def test_gen_bnp_ral():
     shape = "OT"
     lat_const = ELE_DICT[element]["lc"]["FCC"]
     mnp = gen_mnp(shape, diameter, element, lat_const)
-    bnp = gen_bnp(mnp.copy(), "Pd", shape, 40, "RAL", 0)
+    bnp = gen_bnp(mnp.copy(), "Au", "Pd", shape, 40, "RAL", 0)
     symbols = list(bnp.symbols)
     assert "Au" in symbols
     assert "Pd" in symbols
@@ -78,7 +78,7 @@ def test_gen_tnp_ral():
 
 def test_gen_tnp_l10_l10():
     """Test the fully ordered LL10 distribution."""
-    from np_gen.constants import VACUUM_THICKNESS
+    from allomorph.constants import VACUUM_THICKNESS
     element = "Au"
     diameter = 20
     shape = "OT"
@@ -96,8 +96,8 @@ def test_gen_tnp_l10_l10():
 
 def test_tnp_distribution_mapping():
     """Test that all BNP-pair combinations map to a valid TNP distribution."""
-    from np_gen.constants import TNP_DISTRIB_LIST
-    from np_gen.init_struct.gen_tnp_al import _map_tnp_distribution
+    from allomorph.constants import TNP_DISTRIB_LIST
+    from allomorph.init_struct.gen_tnp_al import _map_tnp_distribution
 
     # Every valid (distrib1, distrib2) pair should map to a TNP name
     valid_pairs = [
@@ -112,7 +112,7 @@ def test_tnp_distribution_mapping():
 
 def test_tnp_distribution_invalid_pair():
     """Test that invalid distribution pairs raise ValueError."""
-    from np_gen.init_struct.gen_tnp_al import _map_tnp_distribution
+    from allomorph.init_struct.gen_tnp_al import _map_tnp_distribution
     with pytest.raises(ValueError):
         _map_tnp_distribution("INVALID", "RAL")
 
@@ -124,7 +124,7 @@ def test_gen_bnp_cu_ag():
     shape = "CU"
     lat_const = ELE_DICT[element]["lc"]["FCC"]
     mnp = gen_mnp(shape, diameter, element, lat_const)
-    bnp = gen_bnp(mnp.copy(), "Ag", shape, 50, "RAL", 0)
+    bnp = gen_bnp(mnp.copy(), "Cu", "Ag", shape, 50, "RAL", 0)
     symbols = list(bnp.symbols)
     assert "Cu" in symbols
     assert "Ag" in symbols

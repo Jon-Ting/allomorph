@@ -1,6 +1,6 @@
 # Usage
 
-`np-gen` provides both a command-line interface (CLI) and a Python API.
+`allomorph` provides both a command-line interface (CLI) and a Python API.
 
 ## Command-Line Interface
 
@@ -12,13 +12,13 @@ Generate monometallic, bimetallic (alloy and core-shell), and trimetallic nanopa
 
 ```bash
 # Generate all stages (MNP → BNP → CS → TNP)
-np-gen init-struct --stage all
+allomorph init-struct --stage all
 
 # Or run individual stages
-np-gen init-struct --stage mnp   # monometallic
-np-gen init-struct --stage bnp   # bimetallic alloy
-np-gen init-struct --stage cs    # bimetallic core-shell
-np-gen init-struct --stage tnp   # trimetallic alloy
+allomorph init-struct --stage mnp   # monometallic
+allomorph init-struct --stage bnp   # bimetallic alloy
+allomorph init-struct --stage cs    # bimetallic core-shell
+allomorph init-struct --stage tnp   # trimetallic alloy
 ```
 
 The default element set is **Au, Pt, Pd**. You can override this via the Python API (see below).
@@ -29,10 +29,10 @@ Create alloy potential files for LAMMPS. The EAM module already accepts arbitrar
 
 ```bash
 # Trimetallic
-np-gen eam --names Au Pt Pd
+allomorph eam --names Au Pt Pd
 
 # Bimetallic
-np-gen eam --names Cu Ag
+allomorph eam --names Cu Ag
 ```
 
 ### MD Simulation Management
@@ -41,13 +41,13 @@ Set up and manage LAMMPS simulations:
 
 ```bash
 # Setup directories
-np-gen md-sim setup --init-dir InitStruct/TNP --target-dir MDsim_runs
+allomorph md-sim setup --init-dir InitStruct/TNP --target-dir MDsim_runs
 
 # Generate LAMMPS input files
-np-gen md-sim gen-input --stage 0 --sim-dir MDsim --init-dir InitStruct --eam-dir EAM --template-dir templates
+allomorph md-sim gen-input --stage 0 --sim-dir MDsim --init-dir InitStruct --eam-dir EAM --template-dir templates
 
 # Generate job list
-np-gen md-sim gen-joblist --stage 1 --sim-dir MDsim_runs
+allomorph md-sim gen-joblist --stage 1 --sim-dir MDsim_runs
 ```
 
 ### Feature Extraction
@@ -56,13 +56,13 @@ Set up and run NCPac feature extraction:
 
 ```bash
 # Setup NCPac directories
-np-gen feat-ext setup --sim-dir MDsim --target-dir NCPac --exe path/to/NCPac.exe --inp path/to/NCPac.inp
+allomorph feat-ext setup --sim-dir MDsim --target-dir NCPac --exe path/to/NCPac.exe --inp path/to/NCPac.inp
 
 # Run NCPac in parallel
-np-gen feat-ext run --target-dir NCPac --final-dir Features
+allomorph feat-ext run --target-dir NCPac --final-dir Features
 
 # Merge features with MD outputs
-np-gen feat-ext merge --md-out MDout.csv --feat-dir Features --output-dir Merged --ele-comb AuPtPd
+allomorph feat-ext merge --md-out MDout.csv --feat-dir Features --output-dir Merged --ele-comb AuPtPd
 ```
 
 ## Python API
@@ -72,8 +72,8 @@ You can also use the library directly in your Python scripts.
 ### Monometallic nanoparticle
 
 ```python
-from np_gen.init_struct.gen_mnp import gen_mnp
-from np_gen.constants import ELE_DICT
+from allomorph.init_struct.gen_mnp import gen_mnp
+from allomorph.constants import ELE_DICT
 
 # Generate an Au octahedron
 atoms = gen_mnp(shape='OT', diameter=30, element='Au', latConst=ELE_DICT['Au']['lc']['FCC'])
@@ -83,8 +83,8 @@ print(f"Number of atoms: {len(atoms)}")
 ### Using a custom element dictionary
 
 ```python
-from np_gen.init_struct.gen_mnp import main as gen_mnp_main
-from np_gen.constants import validate_ele_dict
+from allomorph.init_struct.gen_mnp import main as gen_mnp_main
+from allomorph.constants import validate_ele_dict
 
 # Define your own elements
 custom_ele_dict = {
@@ -102,7 +102,7 @@ gen_mnp_main(ele_dict=custom_ele_dict)
 ### Parsing element-combination strings
 
 ```python
-from np_gen.constants import parse_ele_comb
+from allomorph.constants import parse_ele_comb
 
 elements = parse_ele_comb("AuPtPd")
 # → ['Au', 'Pt', 'Pd']

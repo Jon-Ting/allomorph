@@ -3,9 +3,9 @@
 import numpy as np
 import pytest
 
-from np_gen.constants import ELE_DICT
-from np_gen.init_struct.gen_bnp_cs import gen_hard_core_shell
-from np_gen.init_struct.gen_mnp import gen_mnp
+from allomorph.constants import ELE_DICT
+from allomorph.init_struct.gen_bnp_cs import gen_hard_core_shell
+from allomorph.init_struct.gen_mnp import gen_mnp
 
 
 def get_min_dist(atoms):

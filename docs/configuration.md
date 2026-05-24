@@ -1,6 +1,6 @@
 # Configuration
 
-`np-gen` allows you to override default constants such as element properties, nanoparticle diameters, shapes, and atomic distributions.
+`allomorph` allows you to override default constants such as element properties, nanoparticle diameters, shapes, and atomic distributions.
 
 ## Configuration File
 
@@ -65,10 +65,10 @@ ELE_DICT:
 
 ## CLI Usage
 
-Pass the configuration file to any `np-gen` command:
+Pass the configuration file to any `allomorph` command:
 
 ```bash
-np-gen --config config.yaml init-struct --stage mnp
+allomorph --config config.yaml init-struct --stage mnp
 ```
 
 ## Python API
@@ -76,14 +76,14 @@ np-gen --config config.yaml init-struct --stage mnp
 In Python, you can use `update_constants` or pass a custom `ele_dict` to the generation functions.
 
 ```python
-from np_gen.constants import update_constants, load_config
+from allomorph.constants import update_constants, load_config
 
 # Load and update globally
 config = load_config("config.yaml")
 update_constants(config)
 
 # Or pass to specific functions
-from np_gen.init_struct.gen_mnp import main as gen_mnp_main
+from allomorph.init_struct.gen_mnp import main as gen_mnp_main
 gen_mnp_main(ele_dict=config["ELE_DICT"])
 ```
 

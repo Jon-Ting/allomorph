@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-from np_gen.constants import load_config, parse_ele_comb, update_constants
+from allomorph.constants import load_config, parse_ele_comb, update_constants
 
 
 def main(argv=None):
@@ -160,7 +160,7 @@ def main(argv=None):
 
 def _eam_cmd(args):
     """Run the EAM creation command."""
-    from np_gen.eam.create_eam import create_eam as _create_eam
+    from allomorph.eam.create_eam import create_eam as _create_eam
     argv = []
     argv.extend(["-n", *args.name])
     argv.extend(["-nr", str(args.nr)])
@@ -171,10 +171,10 @@ def _eam_cmd(args):
 
 def _init_struct_cmd(args):
     """Run the initial structure generation command."""
-    from np_gen.init_struct.gen_bnp_al import main as gen_bnp_main
-    from np_gen.init_struct.gen_bnp_cs import write_hard_core_shell as gen_bnp_cs_main
-    from np_gen.init_struct.gen_mnp import main as gen_mnp_main
-    from np_gen.init_struct.gen_tnp_al import main as gen_tnp_main
+    from allomorph.init_struct.gen_bnp_al import main as gen_bnp_main
+    from allomorph.init_struct.gen_bnp_cs import write_hard_core_shell as gen_bnp_cs_main
+    from allomorph.init_struct.gen_mnp import main as gen_mnp_main
+    from allomorph.init_struct.gen_tnp_al import main as gen_tnp_main
 
     if args.stage in ("mnp", "all"):
         print("=== Generating monometallic nanoparticles (MNP) ===")
@@ -192,10 +192,10 @@ def _init_struct_cmd(args):
 
 def _md_sim_cmd(args):
     """Run the MD simulation management commands."""
-    from np_gen.md_sim.generator import generate_lammps_input
-    from np_gen.md_sim.manager import generate_job_list
-    from np_gen.md_sim.setup import setup_md_sim
-    from np_gen.md_sim.submission import submit_jobs
+    from allomorph.md_sim.generator import generate_lammps_input
+    from allomorph.md_sim.manager import generate_job_list
+    from allomorph.md_sim.setup import setup_md_sim
+    from allomorph.md_sim.submission import submit_jobs
 
     if args.action == "setup":
         setup_md_sim(args.init_dir, args.target_dir)
@@ -213,8 +213,8 @@ def _md_sim_cmd(args):
 
 def _feat_ext_cmd(args):
     """Run the feature extraction management commands."""
-    from np_gen.feat_ext_eng.gen_csvs import run_ncpac_parallel, setup_ncpac
-    from np_gen.feat_ext_eng.merge_features import (
+    from allomorph.feat_ext_eng.gen_csvs import run_ncpac_parallel, setup_ncpac
+    from allomorph.feat_ext_eng.merge_features import (
         concat_np_feats,
         generate_headers,
         run_merge_reformat_parallel,

@@ -1,1 +1,1 @@
-"""Tests for np-gen."""
+"""Tests for allomorph."""

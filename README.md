@@ -1,4 +1,4 @@
-# np-gen
+# AlloMorph
 
 Toolkit for generating monometallic to trimetallic nanoparticle structural datasets for machine learning applications.
 
@@ -10,8 +10,8 @@ This package uses [uv](https://docs.astral.sh/uv/) for dependency management and
 
 ```bash
 # Clone the repository
-git clone https://github.com/jonathan-ting/np-gen.git
-cd np-gen
+git clone https://github.com/jonathan-ting/allomorph.git
+cd allomorph
 
 # Create a virtual environment and install dependencies
 uv venv
@@ -28,30 +28,30 @@ pip install -e ".[dev]"
 
 ## CLI Usage
 
-After installation, the `np-gen` command is available:
+After installation, the `allomorph` command is available:
 
 ```bash
 # Create EAM potential files
-np-gen eam -n Au Pt Pd
+allomorph eam -n Au Pt Pd
 
 # Generate initial structures (all stages)
-np-gen init-struct --stage all
+allomorph init-struct --stage all
 
 # Generate only monometallic nanoparticles
-np-gen init-struct --stage mnp
+allomorph init-struct --stage mnp
 
 # Generate bimetallic nanoparticles with overwrite
-np-gen init-struct --stage bnp --replace
+allomorph init-struct --stage bnp --replace
 ```
 
 ---
 
 ## Package structure
 
-- `np_gen.eam` — EAM (Embedded Atom Method) potential file creation
-- `np_gen.init_struct` — Initial nanoparticle structure generation (monometallic, bimetallic, trimetallic)
-- `np_gen.md_sim` — Molecular dynamics simulation pipeline (LAMMPS input generation, job management)
-- `np_gen.feat_ext_eng` — Feature extraction and dataset engineering (NCPac integration)
+- `allomorph.eam` — EAM (Embedded Atom Method) potential file creation
+- `allomorph.init_struct` — Initial nanoparticle structure generation (monometallic, bimetallic, trimetallic)
+- `allomorph.md_sim` — Molecular dynamics simulation pipeline (LAMMPS input generation, job management)
+- `allomorph.feat_ext_eng` — Feature extraction and dataset engineering (NCPac integration)
 
 ---
 

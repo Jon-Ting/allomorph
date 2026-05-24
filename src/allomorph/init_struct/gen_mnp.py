@@ -31,7 +31,7 @@ from ase.io.lammpsdata import write_lammps_data
 from ase.io.xyz import write_xyz
 from ase.visualize import view
 
-from np_gen.constants import (
+from allomorph.constants import (
     DIAMETER_LIST,
     ELE_DICT,
     GOLDEN_RATIO,
@@ -241,7 +241,7 @@ def main(replace=False, vis=False, ele_dict=None):
         ele_dict = ELE_DICT
 
     # Load custom shapes from constants if present
-    from np_gen.constants import CUSTOM_SHAPES
+    from allomorph.constants import CUSTOM_SHAPES
     custom_shapes = CUSTOM_SHAPES
 
     print(f"Generating NPs with {VACUUM_THICKNESS} Angstrom of vacuum on each dimension:")

@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "np-gen"
+name = "allomorph"
 version = "0.1.0"
 description = "Toolkit for generating monometallic to trimetallic nanoparticle structural datasets for machine learning."
 
@@ -52,14 +52,14 @@ dev = [
 ]
 
 [project.scripts]
-np-gen = "np_gen.cli:main"
+allomorph = "allomorph.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/jonathan-ting/np-gen"
-"Bug Tracker" = "https://github.com/jonathan-ting/np-gen/issues"
+Homepage = "https://github.com/jonathan-ting/tnp-gen"
+"Bug Tracker" = "https://github.com/jonathan-ting/tnp-gen/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/np_gen"]
+packages = ["src/allomorph"]
 
 [tool.hatch.build.targets.sdist]
 include = [

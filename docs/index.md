@@ -1,6 +1,6 @@
-# Welcome to np-gen
+# Welcome to allomorph
 
-`np-gen` is a toolkit for generating monometallic to trimetallic nanoparticle structural datasets for machine learning.
+`allomorph` is a toolkit for generating monometallic to trimetallic nanoparticle structural datasets for machine learning.
 
 ## Key Features
 
@@ -14,13 +14,13 @@
 
 ```bash
 # Generate structures (all stages: MNP, BNP, CS, TNP)
-np-gen init-struct --stage all
+allomorph init-struct --stage all
 
 # Or generate only monometallic nanoparticles
-np-gen init-struct --stage mnp
+allomorph init-struct --stage mnp
 
 # Setup MD simulations
-np-gen md-sim setup --init-dir InitStruct/TNP --target-dir MDsim_runs
+allomorph md-sim setup --init-dir InitStruct/TNP --target-dir MDsim_runs
 ```
 
 For more details, see the [Installation](installation.md) and [Usage](usage.md) guides.

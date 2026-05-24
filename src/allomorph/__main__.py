@@ -1,4 +1,4 @@
-from np_gen.cli import main
+from allomorph.cli import main
 
 if __name__ == "__main__":
     main()

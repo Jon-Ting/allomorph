@@ -33,11 +33,11 @@ def generate_lammps_input(
         tnp_types: List of TNP types to process.
     """
     if tnp_types is None:
-        from np_gen.constants import TNP_DISTRIB_LIST
+        from allomorph.constants import TNP_DISTRIB_LIST
         tnp_types = [f"{d}/" for d in TNP_DISTRIB_LIST]
 
     if ele_dict is None:
-        from np_gen.constants import ELE_DICT as _ELE_DICT
+        from allomorph.constants import ELE_DICT as _ELE_DICT
         ele_dict = _ELE_DICT
 
     sim_data_path = Path(sim_data_dir)
