@@ -56,3 +56,10 @@ MDsim/*.log
 FeatExtEng/__pycache__/
 FeatExtEng/*.log
 FeatExtEng/NCPac/*.mod
+
+# AI Assistants
+.agents/
+.antigravitycli/
+.codex
+.continue/
+.qodo/
