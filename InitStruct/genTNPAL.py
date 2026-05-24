@@ -19,7 +19,7 @@ from os import mkdir
 from numpy.random import seed, rand, RandomState
 from ase.io.lammpsdata import read_lammps_data, write_lammps_data
 from ase.visualize import view
-from constants import LMP_DATA_DIR, MNP_DIR, BNP_DIR, TNP_DIR, RANDOM_DISTRIB_NO, VACUUM_THICKNESS, eleDict, diameterList, shapeList, BNPdistribList, TNPdistribList, ratioList
+from constants import LMP_DATA_DIR, MNP_DIR, BNP_DIR, TNP_DIR, RANDOM_DISTRIB_NO, VACUUM_THICKNESS, ELE_DICT, DIAMETER_LIST, SHAPE_LIST, BNP_DISTRIB_LIST, TNP_DISTRIB_LIST, RATIO_LIST
 
 
 def dist1D(coord1, coord2, dim):
@@ -66,14 +66,14 @@ def genTNP(obj, element1, element2, element3, ele1Ratio, ele2Ratio, ele3Ratio, d
     probList = []
     if distrib2 == 'RAL': pass
     elif distrib1 == 'L10' and distrib2 == 'L10':
-        lc = eleDict[element1]['lc']['FCC']
+        lc = ELE_DICT[element1]['lc']['FCC']
         vacOffset = VACUUM_THICKNESS / 2
         for (i, atom) in enumerate(obj):
             yModulo = round((round(obj.positions[i][1], 3) - vacOffset) % (lc + lc / 2), 3)
             if (yModulo == lc): atom.symbol = element2
             if (yModulo == 0.0) | (yModulo == lc + lc / 2): atom.symbol = element3
     elif distrib2 == 'L10':
-        lc = eleDict[obj[0].symbol]['lc']['FCC']
+        lc = ELE_DICT[obj[0].symbol]['lc']['FCC']
         vacOffset = VACUUM_THICKNESS / 2
         for (i, atom) in enumerate(obj):
             yModulo = round((round(obj.positions[i][1], 3) - vacOffset) % lc, 3)
@@ -89,8 +89,8 @@ def writeTNP(element1, element2, element3, diameter, shape, ele1Ratio, ele2Ratio
     if not isdir(f"{LMP_DATA_DIR}/{TNP_DIR}"): mkdir(f"{LMP_DATA_DIR}/{TNP_DIR}")
 
     # Get input file name and read data from previous generated file
-    if distrib1 == 'L10': bnpRatio1, bnpRatio2, rep1, dirName = 50, 50, '', BNPdistribList[0]
-    else: bnpRatio1, bnpRatio2, dirName = 100 - ele2Ratio, ele2Ratio, BNPdistribList[1]
+    if distrib1 == 'L10': bnpRatio1, bnpRatio2, rep1, dirName = 50, 50, '', BNP_DISTRIB_LIST[0]
+    else: bnpRatio1, bnpRatio2, dirName = 100 - ele2Ratio, ele2Ratio, BNP_DISTRIB_LIST[1]
     if distrib1 == 'L10' and distrib2 == 'L10':
         fileNameMNP = f"{element1}{diameter}{shape}.lmp"
         bnp = read_lammps_data(f"{LMP_DATA_DIR}/{MNP_DIR}/{fileNameMNP}", style='atomic', units='metal')
@@ -101,11 +101,11 @@ def writeTNP(element1, element2, element3, diameter, shape, ele1Ratio, ele2Ratio
         bnp.set_chemical_symbols(symbols=[element1 if bnp.arrays['type'][i] == 1 else element2 for i in range(bnp.arrays['type'].size)])
 
     # Generate the new file name
-    if distrib1 == 'L10' and distrib2 == 'RAL': dirName = TNPdistribList[0]
-    elif distrib1 == 'RAL' and distrib2 == 'RAL': dirName = TNPdistribList[1]
+    if distrib1 == 'L10' and distrib2 == 'RAL': dirName = TNP_DISTRIB_LIST[0]
+    elif distrib1 == 'RAL' and distrib2 == 'RAL': dirName = TNP_DISTRIB_LIST[1]
     for rep2 in range(RANDOM_DISTRIB_NO):
         if distrib1 == 'L10' and distrib2 == 'L10':
-            ele1Ratio, ele2Ratio, ele3Ratio, rep2, dirName = '', '', '', '', TNPdistribList[2]
+            ele1Ratio, ele2Ratio, ele3Ratio, rep2, dirName = '', '', '', '', TNP_DISTRIB_LIST[2]
         fileNameTNP = f"{element1}{element2}{element3}{diameter}{shape}{ele1Ratio}{ele2Ratio}{ele3Ratio}{distrib1}{rep1}{distrib2}{rep2}.lmp"
         if not replace:
             if isfile(f"{LMP_DATA_DIR}/{TNP_DIR}/{dirName}/{fileNameTNP}"):
@@ -121,23 +121,23 @@ def writeTNP(element1, element2, element3, diameter, shape, ele1Ratio, ele2Ratio
 
 def main(replace=False, vis=False):
     print('Generating TNP alloys of:')
-    for diameter in diameterList:
+    for diameter in DIAMETER_LIST:
         if diameter != 30: continue
         print(f"\n  Size {diameter} Angstrom for:")
-        for element1 in eleDict:
-            for element2 in eleDict:
+        for element1 in ELE_DICT:
+            for element2 in ELE_DICT:
                 if element1 is element2: continue
-                for element3 in eleDict:
+                for element3 in ELE_DICT:
                     if element3 is element1 or element3 is element2: continue
                     print(f"    Element 1: {element1}, Element 2: {element2}, Element 3: {element3}")
-                    for shape in shapeList:
-                        for ratio1 in ratioList:
-                            for ratio2 in ratioList:
+                    for shape in SHAPE_LIST:
+                        for ratio1 in RATIO_LIST:
+                            for ratio2 in RATIO_LIST:
                                 ratio3 = 100 - ratio1 - ratio2
                                 if ratio3 <= 0 or sum((ratio1, ratio2, ratio3)) != 100: continue
                                 print(f"      Ratio1: {ratio1}, Ratio 2: {ratio2}, Ratio 3: {ratio3}")
-                                for distrib1 in BNPdistribList:
-                                    for distrib2 in BNPdistribList:
+                                for distrib1 in BNP_DISTRIB_LIST:
+                                    for distrib2 in BNP_DISTRIB_LIST:
                                         for rep1 in range(RANDOM_DISTRIB_NO):
                                             # if distrib1 == 'L10' and distrib2 == 'L10': continue
                                             if distrib1 == 'RAL' and distrib2 == 'L10': continue

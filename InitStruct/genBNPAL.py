@@ -19,7 +19,7 @@ from os import mkdir
 from numpy.random import seed, rand, RandomState
 from ase.io.lammpsdata import read_lammps_data, write_lammps_data
 from ase.visualize import view
-from constants import LMP_DATA_DIR, MNP_DIR, BNP_DIR, RANDOM_DISTRIB_NO, VACUUM_THICKNESS, eleDict, diameterList, shapeList, BNPdistribList, ratioList
+from constants import LMP_DATA_DIR, MNP_DIR, BNP_DIR, RANDOM_DISTRIB_NO, VACUUM_THICKNESS, ELE_DICT, DIAMETER_LIST, SHAPE_LIST, BNP_DISTRIB_LIST, RATIO_LIST
 
 
 def dist1D(coord1, coord2, dim):
@@ -106,7 +106,7 @@ def genBNP(obj, element2, shape, ratio2, distrib, rseed):
             probList.append(prob)
 
     elif distrib in ['L10', 'L12', 'RL10', 'RL12']:
-        lc = eleDict[obj[0].symbol]['lc']['FCC']
+        lc = ELE_DICT[obj[0].symbol]['lc']['FCC']
         vacOffset = VACUUM_THICKNESS / 2
         for (i, atom) in enumerate(obj):
             yModulo = round((round(obj.positions[i][1], 3) - vacOffset) % lc, 3)
@@ -126,7 +126,7 @@ def writeBNP(element1, diameter, shape, ratio2, distrib, replace=False, vis=Fals
     if not isdir(LMP_DATA_DIR): mkdir(LMP_DATA_DIR)
     if not isdir(f"{LMP_DATA_DIR}/{BNP_DIR}"): mkdir(f"{LMP_DATA_DIR}/{BNP_DIR}")
 
-    for element2 in eleDict:
+    for element2 in ELE_DICT:
         if element2 is element1: continue
         fileNameMNP = f"{element1}{diameter}{shape}.lmp"
         mnp = read_lammps_data(f"{LMP_DATA_DIR}/{MNP_DIR}/{fileNameMNP}", style='atomic', units='metal')
@@ -150,19 +150,19 @@ def writeBNP(element1, diameter, shape, ratio2, distrib, replace=False, vis=Fals
 
 def main(replace=False, vis=False):
     print('Generating BNP alloys of:')
-    for diameter in diameterList:
+    for diameter in DIAMETER_LIST:
         # if diameter != 30: continue  # DEBUG
         print(f"\n  Size {diameter} Angstrom for:")
-        for element in eleDict:
+        for element in ELE_DICT:
             # if element != 'Pt':  continue  # DEBUG
             print(f"    Element: {element}")
-            for shape in shapeList:
+            for shape in SHAPE_LIST:
                 # if shape not in ['DH']:  continue  # DEBUG
                 print(f"    Shape: {shape}")
-                for ratio2 in ratioList:
+                for ratio2 in RATIO_LIST:
                     # if ratio2 != 10:  continue  # DEBUG
                     print(f"    Element 2 Ratio: {ratio2}")
-                    for distrib in BNPdistribList:
+                    for distrib in BNP_DISTRIB_LIST:
                         # if (shape in ['DH', 'IC']) & ('L1' in distrib): continue
                         # if distrib != 'RCS':  continue  # DEBUG
                         writeBNP(element1=element, diameter=diameter, shape=shape, ratio2=ratio2, distrib=distrib, replace=replace, vis=vis)

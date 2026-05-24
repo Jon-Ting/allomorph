@@ -30,7 +30,7 @@ from ase.cluster import Octahedron, Decahedron, Icosahedron
 from ase.io.lammpsdata import write_lammps_data
 from ase.io.xyz import write_xyz
 from ase.visualize import view
-from constants import LMP_DATA_DIR, MNP_DIR, GOLDEN_RATIO, VACUUM_THICKNESS, eleDict, diameterList, shapeList
+from constants import LMP_DATA_DIR, MNP_DIR, GOLDEN_RATIO, VACUUM_THICKNESS, ELE_DICT, DIAMETER_LIST, SHAPE_LIST
 
 
 def genMNP(shape, diameter, element, latConst):
@@ -159,14 +159,14 @@ def writeMNP_sphere(element, diameter, latConst, replace=False, vis=False):
 def main(replace=False, vis=False):
     if not isdir(LMP_DATA_DIR): mkdir(LMP_DATA_DIR)
     print(f"Generating NPs with {VACUUM_THICKNESS} Angstrom of vacuum on each dimension:")
-    for diameter in diameterList:
+    for diameter in DIAMETER_LIST:
         print(f"\n  Size {diameter} Angstrom for:")
-        for element in eleDict:
+        for element in ELE_DICT:
             if element != 'Pd': 
                 continue
             print(f"    Element {element}:")
-            latConst = eleDict[element]['lc']['FCC']
-            for shape in shapeList:
+            latConst = ELE_DICT[element]['lc']['FCC']
+            for shape in SHAPE_LIST:
                 writeMNP(element, diameter, latConst, shape, replace=replace, vis=vis)
                 # writeMNP_sphere(element, diameter, latConst, replace=replace, vis=vis)
             
