@@ -4,11 +4,11 @@
 
 # --------------- PRE-PROCESSING ---------------
 clear           # Clear all memory
-variable        runNum loop 11
+variable        runNum loop {TOTAL_DUMPS_PLUS_ONE}
 variable        stepSize equal {S1_DUMP_INT}
 variable        currStep equal (${runNum}-1)*${stepSize}
 variable        heatTemp equal {HEAT_TEMP}
-variable        currTemp equal 300+(${runNum}-1)*${heatTemp}/10
+variable        currTemp equal {INIT_TEMP}+(${runNum}-1)*({HEAT_TEMP}-{INIT_TEMP})/{TOTAL_DUMPS}
 shell           find {INP_FILE_NAME}S1/ -regex .*"\.0+"${currStep}"\..*lmp" -exec cp {} ./{INP_FILE_NAME}S1.mpiio.lmp \;
 shell           cd {INP_FILE_NAME}S2/
 
@@ -24,7 +24,7 @@ reset_timestep  0
 
 # --------------- FORCE FIELDS ---------------
 pair_style      eam/alloy
-pair_coeff      * * {POT_FILE} {ELEMENT1} {ELEMENT2} {ELEMENT3}
+pair_coeff      * * {POT_FILE} {MAPPING}
 neighbor        2.0 bin  # build list by binning, add 2 A skin
 neigh_modify    delay 10 check yes  # Wait 10 steps after building, build only when atom moved > skin/2
 
@@ -38,7 +38,7 @@ print           "--------------- HEATING AT ${currTemp} K ---------------"
 velocity        all create ${currTemp} 777 mom yes rot yes  # seed = 777
 fix             nhS2 all nvt temp ${currTemp} ${currTemp} $(100.0*dt)
 dump            dumpS2 all xyz/mpiio {S2_DUMP_INT} {INP_FILE_NAME}S2.${currStep}.mpiio.xyz
-dump_modify     dumpS2 element {ELEMENT1} {ELEMENT2} {ELEMENT3}
+dump_modify     dumpS2 element {MAPPING}
 run             {S2_PERIOD}
 unfix           nhS2
 undump          dumpS2
@@ -46,7 +46,7 @@ undump          dumpS2
 print           "--------------- MINIMISATION ---------------"
 min_style       cg  # Polak-Ribiere version
 minimize        1e-15 1e-15 100000 100000  # E tol, F tol, max iter, max F/E eval
-write_dump      all xyz {INP_FILE_NAME}S2min.${currStep}.xyz modify element {ELEMENT1} {ELEMENT2} {ELEMENT3}
+write_dump      all xyz {INP_FILE_NAME}S2min.${currStep}.xyz modify element {MAPPING}
 
 # --------------- INDIVIDUAL DONE ---------------
 print           ""

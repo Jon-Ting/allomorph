@@ -11,7 +11,7 @@ reset_timestep  0
 
 # --------------- FORCE FIELDS ---------------
 pair_style      eam/alloy
-pair_coeff      * * {POT_FILE} {ELEMENT1} {ELEMENT2} {ELEMENT3}
+pair_coeff      * * {POT_FILE} {MAPPING}
 neighbor        2.0 bin  # build list by binning, add 2 A skin
 neigh_modify    delay 10 check yes  # Wait 10 steps after building, build only when atom moved > skin/2
 
@@ -21,7 +21,7 @@ thermo_style    custom step time temp press pe ke etotal
 fix             zeroMomentum all momentum 1 linear 1 1 1 angular rescale  # Reset linear & angular momenta to 0 every step
 fix             nhS1 all nvt temp {INIT_TEMP} {HEAT_TEMP} $(100.0*dt)
 dump            dumpS1 all custom/mpiio {S1_DUMP_INT} {INP_FILE_NAME}S1.*.mpiio.lmp id type element x y z
-dump_modify     dumpS1 element {ELEMENT1} {ELEMENT2} {ELEMENT3} pad 8  # Required for proper visualisation of structures generated
+dump_modify     dumpS1 element {MAPPING} pad 8  # Required for proper visualisation of structures generated
 
 # --------------- SIMULATION RUNS --------------- 
 print           "--------------- HEATING TO {HEAT_TEMP} K ---------------"

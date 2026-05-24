@@ -9,12 +9,12 @@ boundary        p p p  # Periodic boundaries in x-, y-, z- directions
 atom_style      atomic
 
 # --------------- ATOM DEFINITION ---------------
-read_data       {INP_DIR_NAME}{INP_FILE_NAME}.lmp group {ELEMENT1}{ELEMENT2}{ELEMENT3} nocoeff
+read_data       {INP_DIR_NAME}{INP_FILE_NAME}.lmp nocoeff
 change_box      all x scale 3 y scale 3 z scale 3
 
 # --------------- FORCE FIELDS ---------------
 pair_style      eam/alloy
-pair_coeff      * * {POT_FILE} {ELEMENT1} {ELEMENT2} {ELEMENT3}
+pair_coeff      * * {POT_FILE} {MAPPING}
 neighbor        2.0 bin  # build list by binning, add 2 A skin
 neigh_modify    delay 10 check yes  # Wait 10 steps after building, build only when atom moved > skin/2
 
