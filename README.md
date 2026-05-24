@@ -55,23 +55,28 @@ np-gen init-struct --stage bnp --replace
 
 ---
 
-## Contents of legacy directories
-- InitStruct: LAMMPS, Python, and Bash scripts written for generation of TNP initial structures (.lmp format)
-- EAM: Modified LAMMPS tools for the generation of relevant interatomic potential files required for LAMMPS scripts execution
-- MDsim: LAMMPS, Python, and Bash scripts written for tasks related to molecular dynamics (MD) simulations of the generated TNPs
-- FeatExtEng: Python and Bash scripts written for tasks related to feature extraction of TNPs, along with the source code, executable file, and input files of Network Characterisation Package (NCPac), a software developed by Dr George Opletal from CSIRO and extended by Jonathan Ting for structural/geometrical feature extraction of TNPs
+## Project resources
 
+- **InitStruct**: LAMMPS, Python, and Bash scripts for generating nanoparticle initial structures (.lmp format).
+- **EAM**: Modified LAMMPS tools and databases for generating interatomic potential files required for LAMMPS scripts execution.
+- **MDsim**: LAMMPS templates and Bash scripts for tasks related to molecular dynamics (MD) simulations.
+- **FeatExtEng**: Source code and configuration for the Network Characterisation Package (NCPac) used for feature extraction.
 
-## Instructions to use the repository to generate more TNPs structural data
-- The current script is designed to:
-    - only generate TNPs with different combinations of the listed degrees of freedom, but extension is possible by appropriate modification of the code.
-    - be run on high performance computing cluster such as Gadi of National Computational Infrastructure or cluster1 of ANU College of Engineering and Computer Science.
+---
+
+## Instructions to use the repository
+- The toolkit is designed to generate nanoparticles with configurable degrees of freedom.
+- It is optimized for high-performance computing (HPC) environments such as Gadi of National Computational Infrastructure (NCI).
 
 ## Degrees of freedom of nanoparticles generated
 - **Elemental composition:** Configurable (default: Au, Pt, Pd). Supports 1–3 arbitrary metallic elements.
 - **Size:** Configurable diameter list (default: 10, 15, 20, 25, 30 Å)
 - **Shape:** Cube (CU), Tetrahedron (TH), Rhombic Dodecahedron (RD), Octahedron (OT), Truncated Octahedron (TO), Cuboctahedron (CO), Decahedron (DH), Icosahedron (IC), Sphere (SP)
 - **Ratio:** i:j:k where i, j, k are from {20, 40, 60, 80}, with constraint i+j+k == 100
+- **Atomic ordering (BNP):**
+    - L10: L1_0 ordered alloy
+    - RAL: Randomly distributed alloy
+    - RCS: Randomly distributed core-shell-like alloy
 - **Atomic ordering (TNP):**
     - L10R: ordered alloy with randomly distributed M3 (o-M1M2-M3)
     - CS: inner-core@core@shell (M1@M2@M3)
