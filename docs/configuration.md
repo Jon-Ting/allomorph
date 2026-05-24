@@ -15,8 +15,15 @@ RANDOM_DISTRIB_NO: 5
 
 # Nanoparticle parameters
 DIAMETER_LIST: [20, 30, 40]
-SHAPE_LIST: ["OT", "TO", "SP"]
+SHAPE_LIST: ["OT", "TO", "SP", "MY_CUSTOM_CUBE"]
 RATIO_LIST: [25, 50, 75]
+
+# Custom shape definitions
+CUSTOM_SHAPES:
+  MY_CUSTOM_CUBE:
+    builder: "FaceCenteredCubic"
+    surfaces: [[1, 0, 0]]
+    layers: [5]
 
 # Element property dictionary
 ELE_DICT:
@@ -79,6 +86,24 @@ update_constants(config)
 from np_gen.init_struct.gen_mnp import main as gen_mnp_main
 gen_mnp_main(ele_dict=config["ELE_DICT"])
 ```
+
+## Custom Shapes
+
+You can define custom nanoparticle shapes by adding them to the `CUSTOM_SHAPES` dictionary in your configuration and including their name in `SHAPE_LIST`.
+
+Currently, custom shapes are built using the `ase.cluster.cubic.FaceCenteredCubic` builder. You can specify `surfaces` and `layers`.
+
+```yaml
+CUSTOM_SHAPES:
+  LARGE_CUBE:
+    builder: "FaceCenteredCubic"
+    surfaces: [[1, 0, 0]]
+    layers: [10]
+```
+
+## Parallel Generation
+
+Structure generation (MNP, BNP, TNP) now automatically utilizes multiple CPU cores via the `multiprocessing` module to speed up the creation of large datasets. No extra configuration is needed.
 
 ## Required Element Properties
 
