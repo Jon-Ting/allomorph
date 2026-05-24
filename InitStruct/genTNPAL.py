@@ -93,11 +93,11 @@ def writeTNP(element1, element2, element3, diameter, shape, ele1Ratio, ele2Ratio
     else: bnpRatio1, bnpRatio2, dirName = 100 - ele2Ratio, ele2Ratio, BNP_DISTRIB_LIST[1]
     if distrib1 == 'L10' and distrib2 == 'L10':
         fileNameMNP = f"{element1}{diameter}{shape}.lmp"
-        bnp = read_lammps_data(f"{LMP_DATA_DIR}/{MNP_DIR}/{fileNameMNP}", style='atomic', units='metal')
+        bnp = read_lammps_data(f"{LMP_DATA_DIR}/{MNP_DIR}/{fileNameMNP}", atom_style='atomic', units='metal')
         bnp.set_chemical_symbols(symbols=[element1] * len(bnp))
     else:
         fileNameBNP = f"{element1}{element2}{diameter}{shape}{bnpRatio1}{bnpRatio2}{distrib1}{rep1}.lmp"
-        bnp = read_lammps_data(f"{LMP_DATA_DIR}/{BNP_DIR}/{dirName}/{fileNameBNP}", style='atomic', units='metal')
+        bnp = read_lammps_data(f"{LMP_DATA_DIR}/{BNP_DIR}/{dirName}/{fileNameBNP}", atom_style='atomic', units='metal')
         bnp.set_chemical_symbols(symbols=[element1 if bnp.arrays['type'][i] == 1 else element2 for i in range(bnp.arrays['type'].size)])
 
     # Generate the new file name

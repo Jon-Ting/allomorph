@@ -129,7 +129,7 @@ def writeBNP(element1, diameter, shape, ratio2, distrib, replace=False, vis=Fals
     for element2 in ELE_DICT:
         if element2 is element1: continue
         fileNameMNP = f"{element1}{diameter}{shape}.lmp"
-        mnp = read_lammps_data(f"{LMP_DATA_DIR}/{MNP_DIR}/{fileNameMNP}", style='atomic', units='metal')
+        mnp = read_lammps_data(f"{LMP_DATA_DIR}/{MNP_DIR}/{fileNameMNP}", atom_style='atomic', units='metal')
         mnp.set_chemical_symbols(symbols=[element1] * len(mnp))
         ratio1 = 100 - ratio2
         for rep in range(RANDOM_DISTRIB_NO):

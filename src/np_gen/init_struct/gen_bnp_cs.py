@@ -78,7 +78,7 @@ def write_hard_core_shell(replace=False, vis=False, ele_dict=None):
                         if not path1.exists():
                             continue
 
-                        shell_atoms = read_lammps_data(str(path1), style='atomic', units='metal')
+                        shell_atoms = read_lammps_data(str(path1), atom_style='atomic', units='metal')
                         shell_atoms.set_chemical_symbols([element1] * len(shell_atoms))
 
                         for shape2 in SHAPE_LIST:
@@ -87,7 +87,8 @@ def write_hard_core_shell(replace=False, vis=False, ele_dict=None):
                             if not path2.exists():
                                 continue
 
-                            core_atoms = read_lammps_data(str(path2), style='atomic', units='metal')
+                            core_atoms = read_lammps_data(str(path2), atom_style='atomic', units='metal')
+
                             core_atoms.set_chemical_symbols([element2] * len(core_atoms))
 
                             file_out = f"{element1}{size1}{shape1}{element2}{size2}{shape2}CS.lmp"
