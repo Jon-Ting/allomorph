@@ -2,14 +2,6 @@
 
 Toolkit for generating monometallic to trimetallic nanoparticle structural datasets for machine learning applications.
 
-This repository was originally developed for generation of AuPtPd trimetallic nanoparticles, but has been generalised to support arbitrary metallic elements (1–3 elements).
-
-* Conducted by: Kaihan Lu assisted by Haotai Peng (Bill)
-* Supervised by: Jonathan Yik Chang Ting and Amanda Barnard
-* Institution: School of Computing Australian National University
-* Research course: SCNC2021 Science Research Project
-* Date Accomplished: 1/1/23
-
 ---
 
 ## Installation
@@ -90,6 +82,16 @@ np-gen init-struct --stage bnp --replace
     - CSL10: core@ordered-shell (M1@o-M2M3)
     - CRSR: core@shell with randomly distributed M3 (M1M2@M2M3)
     - LL10: ordered intermetallic solution (o-M1M2M3)
+
+---
+
+## Future Enhancements
+
+- **Support >3 metals:** Extend the combinatorial generation logic beyond trimetallic (quadrimetallic, etc.).
+- **Non-FCC lattice support:** Support for BCC, HCP, and other lattice types.
+- **HDF5 / ASE trajectory output:** Support for modern trajectory and structure formats in addition to LAMMPS `.lmp` files.
+
+---
 
 ### Generation of TNP initial structures
 1. Modify the variables in the files below under ./InitStruct/ to generate other combinations:
