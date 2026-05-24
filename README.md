@@ -1,13 +1,68 @@
-# TNPgeneration
-This repository contains code written for generation of AuPtPd trimetallic nanoparticles (TNPs) structural data set for machine learning applications.
+# tnp-gen
+
+Toolkit for generating trimetallic nanoparticle (TNP) structural datasets for machine learning applications.
+
+This repository was originally developed for generation of AuPtPd trimetallic nanoparticles.
+
 * Conducted by: Kaihan Lu assisted by Haotai Peng (Bill)
 * Supervised by: Jonathan Yik Chang Ting and Amanda Barnard
 * Institution: School of Computing Australian National University
 * Research course: SCNC2021 Science Research Project
 * Date Accomplished: 1/1/23
 
+---
 
-## Contents of each directory
+## Installation
+
+This package uses [uv](https://docs.astral.sh/uv/) for dependency management and packaging.
+
+```bash
+# Clone the repository
+git clone https://github.com/jonathan-ting/tnp-gen.git
+cd tnp-gen
+
+# Create a virtual environment and install dependencies
+uv venv
+uv pip install -e ".[dev]"
+```
+
+Alternatively, you can install directly with pip:
+
+```bash
+pip install -e ".[dev]"
+```
+
+---
+
+## CLI Usage
+
+After installation, the `tnp-gen` command is available:
+
+```bash
+# Create EAM potential files
+tnp-gen eam -n Au Pt Pd
+
+# Generate initial structures (all stages)
+tnp-gen init-struct --stage all
+
+# Generate only monometallic nanoparticles
+tnp-gen init-struct --stage mnp
+
+# Generate bimetallic nanoparticles with overwrite
+tnp-gen init-struct --stage bnp --replace
+```
+
+---
+
+## Package structure
+
+- `tnp_gen.eam` — EAM (Embedded Atom Method) potential file creation
+- `tnp_gen.init_struct` — Initial nanoparticle structure generation (monometallic, bimetallic, trimetallic)
+- `tnp_gen.feat_ext_eng` — Feature extraction and dataset engineering (NCPac integration)
+
+---
+
+## Contents of legacy directories
 - InitStruct: LAMMPS, Python, and Bash scripts written for generation of TNP initial structures (.lmp format)
 - EAM: Modified LAMMPS tools for the generation of relevant interatomic potential files required for LAMMPS scripts execution
 - MDsim: LAMMPS, Python, and Bash scripts written for tasks related to molecular dynamics (MD) simulations of the generated TNPs
@@ -38,10 +93,10 @@ This repository contains code written for generation of AuPtPd trimetallic nanop
 ### Generation of TNP initial structures
 1. Modify the variables in the files below under ./InitStruct/ to generate other combinations:
     - constants.py
-        - {diameterList}: NP diameters (Angstrom)
-        - {ratioList}: Percentage of each element (only ratio combinations that add up to 100% will be generated)
+        - {DIAMETER_LIST}: NP diameters (Angstrom)
+        - {RATIO_LIST}: Percentage of each element (only ratio combinations that add up to 100% will be generated)
         - {RANDOM_DISTRIB_NO}: Number of replicas for atomic orderings involving random distribution
-        - {VACUUM_THICKNESS}: Size of the box containing the NP (need to be >= greatest diameter in {diameterList})
+        - {VACUUM_THICKNESS}: Size of the box containing the NP (need to be >= greatest diameter in {DIAMETER_LIST})
     - genBNPCS.sh
         - {SIZE_ARR}: NP diameters (Angstrom)
     - genTNPCS*.sh
