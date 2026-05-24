@@ -9,11 +9,11 @@ written by: Germain Clavier g.m.g.c.clavier@tue.nl
 This script requires the numpy library.
 """
 
-import sys
 import argparse as ap
+import logging
+import sys
 from datetime import date
 from pathlib import Path
-import logging
 
 import numpy as np
 
@@ -79,7 +79,7 @@ def write_file(attypes, filename, Fr, rhor, z2r, nrho, drho, nr, dr, rc):
     struc = "fcc"
     output_path = Path(filename)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    
+
     with open(output_path, "w") as f:
         f.write("DATE: " + date.today().strftime("%Y-%m-%d") + " UNITS: metal")
         f.write(" CONTRIBUTOR: Xiaowang Zhou xzhou@sandia.gov, Lucas Hale lucas.hale@nist.gov,")
@@ -128,7 +128,7 @@ def create_eam(argv=None):
                         help="Number of points in rho space (must be > 1, default: 2000)")
     parser.add_argument("-o", "--output-dir", dest="output_dir", default="setfl_files",
                         help="Output directory for .set files (default: setfl_files)")
-    
+
     args = parser.parse_args(argv)
 
     if args.nr <= 1:
@@ -172,12 +172,12 @@ def create_eam(argv=None):
                 z2r[i, j, :] = r * pair(n1, n2, r)
             else:
                 z2r[i, j, :] = r * pair(n1, n2, r)
-    
+
     # Mirror z2r
     for i in range(ntypes):
         for j in range(i + 1, ntypes):
             z2r[i, j, :] = z2r[j, i, :]
-            
+
     rhomax = max(rhomax, 2.0 * rhoemax, 100.0)
     rho = np.linspace(0.0, rhomax, num=nrho, dtype=np.double)
     drho = rho[1] - rho[0]

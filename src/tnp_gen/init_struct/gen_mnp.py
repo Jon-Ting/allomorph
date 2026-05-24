@@ -20,26 +20,24 @@ Note:
     - Could make use of Octahedron(alloy=True) to generate L1_2 alloys
 """
 
+from math import cos, radians, sin, sqrt
 from pathlib import Path
-from math import sqrt, radians, cos, sin
-from os.path import isfile, isdir
-from os import mkdir
+
 import numpy as np
-from ase.build import add_vacuum
+from ase.cluster import Decahedron, Icosahedron, Octahedron
 from ase.cluster.cubic import FaceCenteredCubic
-from ase.cluster import Octahedron, Decahedron, Icosahedron
 from ase.io.lammpsdata import write_lammps_data
 from ase.io.xyz import write_xyz
 from ase.visualize import view
 
 from tnp_gen.constants import (
+    DIAMETER_LIST,
+    ELE_DICT,
+    GOLDEN_RATIO,
     LMP_DATA_DIR,
     MNP_DIR,
-    GOLDEN_RATIO,
-    VACUUM_THICKNESS,
-    ELE_DICT,
-    DIAMETER_LIST,
     SHAPE_LIST,
+    VACUUM_THICKNESS,
 )
 
 
@@ -154,7 +152,7 @@ def write_mnp(element, diameter, lat_const, shape, replace=False, vis=False):
     file_name_lmp = f"{element}{diameter}{shape}.lmp"
     output_dir = Path(LMP_DATA_DIR) / MNP_DIR
     output_path_lmp = output_dir / file_name_lmp
-    
+
     if not replace and output_path_lmp.exists():
         print(f"      {file_name_lmp} already exists, skipping...")
         return
@@ -166,14 +164,14 @@ def write_mnp(element, diameter, lat_const, shape, replace=False, vis=False):
     mnp.translate([VACUUM_THICKNESS / 2] * 3)
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     write_lammps_data(
         str(output_path_lmp),
         atoms=mnp,
         units='metal',
         atom_style='atomic',
     )
-    
+
     file_name_xyz = f"{element}{diameter}{shape}.xyz"
     output_path_xyz = output_dir / file_name_xyz
     with open(output_path_xyz, 'w') as f:
@@ -184,14 +182,16 @@ def write_mnp(element, diameter, lat_const, shape, replace=False, vis=False):
         view(mnp)
 
 
-def main(replace=False, vis=False):
+def main(replace=False, vis=False, ele_dict=None):
     """Generate all monometallic nanoparticles defined in constants."""
+    if ele_dict is None:
+        ele_dict = ELE_DICT
     print(f"Generating NPs with {VACUUM_THICKNESS} Angstrom of vacuum on each dimension:")
     for diameter in DIAMETER_LIST:
         print(f"\n  Size {diameter} Angstrom for:")
-        for element in ELE_DICT:
+        for element in ele_dict:
             print(f"    Element {element}:")
-            lat_const = ELE_DICT[element]['lc']['FCC']
+            lat_const = ele_dict[element]['lc']['FCC']
             for shape in SHAPE_LIST:
                 write_mnp(element, diameter, lat_const, shape, replace=replace, vis=vis)
 

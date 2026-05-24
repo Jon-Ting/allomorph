@@ -3,24 +3,25 @@
 import argparse
 import sys
 
+from tnp_gen.constants import parse_ele_comb
 from tnp_gen.eam.create_eam import create_eam as _create_eam
-from tnp_gen.init_struct.gen_mnp import main as gen_mnp_main
+from tnp_gen.feat_ext_eng.gen_csvs import run_ncpac_parallel, setup_ncpac
+from tnp_gen.feat_ext_eng.merge_features import concat_np_feats, generate_headers, run_merge_reformat_parallel
 from tnp_gen.init_struct.gen_bnp_al import main as gen_bnp_main
-from tnp_gen.init_struct.gen_tnp_al import main as gen_tnp_main
 from tnp_gen.init_struct.gen_bnp_cs import write_hard_core_shell as gen_bnp_cs_main
-from tnp_gen.md_sim.setup import setup_md_sim
+from tnp_gen.init_struct.gen_mnp import main as gen_mnp_main
+from tnp_gen.init_struct.gen_tnp_al import main as gen_tnp_main
 from tnp_gen.md_sim.generator import generate_lammps_input
 from tnp_gen.md_sim.manager import generate_job_list
+from tnp_gen.md_sim.setup import setup_md_sim
 from tnp_gen.md_sim.submission import submit_jobs
-from tnp_gen.feat_ext_eng.gen_csvs import setup_ncpac, run_ncpac_parallel
-from tnp_gen.feat_ext_eng.merge_features import run_merge_reformat_parallel, concat_np_feats, ALL_HEADERS_LIST
 
 
 def main(argv=None):
     """Entry point for the tnp-gen CLI."""
     parser = argparse.ArgumentParser(
         prog="tnp-gen",
-        description="Toolkit for generating trimetallic nanoparticle structural datasets.",
+        description="Toolkit for generating monometallic to trimetallic nanoparticle structural datasets.",
     )
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
@@ -92,7 +93,7 @@ def main(argv=None):
     md_setup_parser = md_subparsers.add_parser("setup", help="Set up simulation directories.")
     md_setup_parser.add_argument("--init-dir", required=True, help="Path to initial structures.")
     md_setup_parser.add_argument("--target-dir", required=True, help="Target simulation directory.")
-    
+
     # md-sim gen-input
     md_gen_parser = md_subparsers.add_parser("gen-input", help="Generate LAMMPS input files.")
     md_gen_parser.add_argument("--stage", type=int, required=True, help="Simulation stage (0, 1, 2).")
@@ -216,8 +217,10 @@ def _feat_ext_cmd(args):
                     working_list.append((str(d), d.name))
         run_ncpac_parallel(working_list, args.final_dir)
     elif args.action == "merge":
+        elements = parse_ele_comb(args.ele_comb)
+        headers_list = generate_headers(elements)
         run_merge_reformat_parallel(
-            args.md_out, args.feat_dir, args.output_dir, args.ele_comb, ALL_HEADERS_LIST
+            args.md_out, args.feat_dir, args.output_dir, args.ele_comb, headers_list
         )
     elif args.action == "concat":
         concat_np_feats(args.feat_dir, args.output_file)

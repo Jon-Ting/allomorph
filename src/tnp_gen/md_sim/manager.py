@@ -1,6 +1,5 @@
-import os
-import re
 import logging
+import os
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -9,7 +8,7 @@ def check_log_done(log_file: Path, stage: int) -> bool:
     """Checks if a LAMMPS log file indicates completion."""
     if not log_file.exists():
         return False
-    
+
     try:
         with open(log_file, 'rb') as f:
             # Read the last few bytes to check for "DONE!"
@@ -20,7 +19,7 @@ def check_log_done(log_file: Path, stage: int) -> bool:
                 chunk_size = size
             f.seek(-chunk_size, os.SEEK_END)
             content = f.read().decode('utf-8', errors='ignore')
-            
+
             if stage == 2:
                 return "ALL DONE!" in content or "DONE!" in content
             else:
@@ -35,7 +34,7 @@ def update_config(config_file: Path, key: str, value: str = "true"):
     if config_file.exists():
         with open(config_file, 'r') as f:
             content = f.read()
-    
+
     if f"{key}: {value}" in content:
         return
 
@@ -47,7 +46,7 @@ def get_config_value(config_file: Path, key: str) -> str:
     """Gets a value from config.yml."""
     if not config_file.exists():
         return ""
-    
+
     with open(config_file, 'r') as f:
         for line in f:
             if line.startswith(f"{key}:"):
@@ -67,7 +66,7 @@ def generate_job_list(
     sim_data_path = Path(sim_data_dir)
     job_list_path = Path(job_list_file)
     queue_list_path = sim_data_path / queue_list_file
-    
+
     # Read currently queued jobs
     queued_jobs = set()
     if queue_list_path.exists():
@@ -109,7 +108,7 @@ def generate_job_list(
         if job_path_str in queued_jobs:
             logger.debug(f"{job_path_str} already in queue, skipping...")
             continue
-        
+
         # Check if running
         if run_lock.exists():
             logger.debug(f"{dir_path} is running a job, skipping...")

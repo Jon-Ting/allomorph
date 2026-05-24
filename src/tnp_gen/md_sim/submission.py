@@ -1,7 +1,7 @@
-import os
-import subprocess
 import logging
+import os
 import re
+import subprocess
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -22,23 +22,23 @@ def calculate_resources(num_atoms: int, stage: int):
     ncpus = ((num_atoms - 1) // 64000 + 1) * 4
     mem = (num_atoms // 360000 + 1) * ncpus // 2  # GB
     wall_time = (36 * num_atoms) // ncpus  # s
-    
+
     if stage == 1:
         mem = int(mem * 0.6) + 1
         wall_time = wall_time * 3
     elif stage == 2:
         mem = int(mem * 0.8) + 1
         wall_time = wall_time * 4
-        
+
     if wall_time > 172800:
         wall_time = 172800
-        
+
     hours = wall_time // 3600
     minutes = (wall_time % 3600) // 60
     seconds = wall_time % 60
-    
+
     wall_time_str = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
-    
+
     return ncpus, mem, wall_time_str
 
 def generate_pbs_script(
@@ -61,7 +61,7 @@ def generate_pbs_script(
 """
     if email:
         pbs_content += f"#PBS -M {email}\n#PBS -m a\n"
-    
+
     pbs_content += f"""
 module load lammps/29Sep2021
 
@@ -83,7 +83,7 @@ def submit_jobs(
     """
     job_list_path = Path(job_list_file)
     sim_data_path = Path(sim_data_dir)
-    
+
     if not job_list_path.exists():
         logger.error(f"Job list {job_list_file} not found!")
         return
@@ -112,42 +112,42 @@ def submit_jobs(
     for job_path_str in jobs_to_run:
         # job_path_str might look like: /scratch/q27/jt5911/CL10S/AuPdPt30_.../AuPdPt30_...S0
         # We need to extract the stage and the directory
-        
+
         full_job_path = Path(job_path_str)
         job_dir = full_job_path.parent
         job_name = full_job_path.name # e.g., AuPdPt30_...S0
-        
+
         # Extract stage from job name
         match = re.search(r'S(\d+)$', job_name)
         if not match:
             logger.warning(f"Could not determine stage from {job_name}, skipping...")
             continue
         stage = int(match.group(1))
-        
+
         # Get number of atoms from the .lmp file (which should have been copied in setup)
         # The .lmp file name is the part of job_name before S{stage}
         lmp_file_name = job_name[:match.start()] + ".lmp"
         lmp_file = job_dir / lmp_file_name
-        
+
         if not lmp_file.exists():
             logger.warning(f"LMP file {lmp_file} not found, skipping...")
             continue
-            
+
         num_atoms = get_num_atoms(lmp_file)
         if num_atoms == 0:
             logger.warning(f"Could not get number of atoms for {job_name}, skipping...")
             continue
-            
+
         ncpus, mem, wall_time = calculate_resources(num_atoms, stage)
-        
+
         pbs_script = generate_pbs_script(job_name, job_dir, ncpus, wall_time, mem, project, email)
-        
+
         pbs_file = job_dir / f"{job_name}.pbs"
         with open(pbs_file, 'w') as f:
             f.write(pbs_script)
-            
+
         logger.info(f"Generated PBS script for {job_name}: ncpus={ncpus}, mem={mem}GB, walltime={wall_time}")
-        
+
         # Submit the job
         try:
             subprocess.run(["qsub", str(pbs_file)], check=True)

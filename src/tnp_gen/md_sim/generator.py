@@ -1,5 +1,3 @@
-import os
-import re
 import logging
 from pathlib import Path
 
@@ -21,6 +19,7 @@ def generate_lammps_input(
     s2_period: int = 20000,
     s2_ther_int: int = 100,
     s1_ther_int: int = 500,
+    ele_dict=None,
 ):
     """
     Generates LAMMPS input files for each nanoparticle.
@@ -34,7 +33,12 @@ def generate_lammps_input(
         tnp_types: List of TNP types to process.
     """
     if tnp_types is None:
-        tnp_types = ['CL10S/', 'CRALS/', 'CRSR/', 'CS/', 'CSL10/', 'CSRAL/', 'L10R/', 'LL10/', 'RRAL/']
+        from tnp_gen.constants import TNP_DISTRIB_LIST
+        tnp_types = [f"{d}/" for d in TNP_DISTRIB_LIST]
+
+    if ele_dict is None:
+        from tnp_gen.constants import ELE_DICT as _ELE_DICT
+        ele_dict = _ELE_DICT
 
     sim_data_path = Path(sim_data_dir)
     init_struct_base_path = Path(init_struct_base_dir)
@@ -56,12 +60,12 @@ def generate_lammps_input(
             continue
 
         logger.info(f"Processing {tnp_type} directory...")
-        
+
         # Iterate over each nanoparticle directory in the simulation data directory
         for tnp_dir in tnp_type_dir.iterdir():
             if not tnp_dir.is_dir():
                 continue
-            
+
             inp_file_name = tnp_dir.name
             logger.info(f"  Nanoparticle: {inp_file_name}")
 
@@ -71,17 +75,34 @@ def generate_lammps_input(
                 continue
 
             # Identify elements from name (e.g., AuPdPt30_...)
-            elements = re.findall(r'[A-Z][a-z]?', inp_file_name)
-            if len(elements) < 3:
-                logger.warning(f"    Could not identify 3 elements from {inp_file_name}, skipping...")
+            known_symbols = sorted(ele_dict.keys(), key=len, reverse=True)
+            elements = []
+            i = 0
+            name_part = inp_file_name
+            # Strip trailing digits and shape codes to get element prefix
+            while i < len(name_part):
+                matched = False
+                for sym in known_symbols:
+                    if name_part[i:].startswith(sym):
+                        elements.append(sym)
+                        i += len(sym)
+                        matched = True
+                        break
+                if not matched:
+                    # Stop when we hit a non-element character (digit, etc.)
+                    break
+            if len(elements) < 1:
+                logger.warning(f"    Could not identify any elements from {inp_file_name}, skipping...")
                 continue
-            
-            element1, element2, element3 = elements[:3]
+
+            element1 = elements[0]
+            element2 = elements[1] if len(elements) > 1 else element1
+            element3 = elements[2] if len(elements) > 2 else element2
             logger.info(f"    Elements: {element1}, {element2}, {element3}")
 
             pot_file = eam_path / "setfl_files" / f"{element1}{element2}{element3}.set"
             init_struct_dir = init_struct_base_path / tnp_type.strip('/')
-            
+
             # Variables for substitution
             subs = {
                 "{INP_FILE_NAME}": inp_file_name,
@@ -129,5 +150,5 @@ def generate_lammps_input(
 
             with open(target_in_file, 'w') as f:
                 f.write(content)
-            
+
             logger.info(f"    Generated {target_in_file}")
