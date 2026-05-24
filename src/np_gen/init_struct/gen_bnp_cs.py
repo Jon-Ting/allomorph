@@ -7,7 +7,7 @@ import numpy as np
 from ase.io.lammpsdata import read_lammps_data, write_lammps_data
 from ase.visualize import view
 
-from tnp_gen.constants import BNP_DIR, CS_DIR, DIAMETER_LIST, ELE_DICT, LMP_DATA_DIR, MNP_DIR, SHAPE_LIST
+from np_gen.constants import BNP_DIR, CS_DIR, DIAMETER_LIST, ELE_DICT, LMP_DATA_DIR, MNP_DIR, SHAPE_LIST
 
 logger = logging.getLogger(__name__)
 

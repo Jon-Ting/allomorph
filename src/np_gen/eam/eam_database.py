@@ -10,7 +10,13 @@ written by: Germain Clavier g.m.g.c.clavier@tue.nl
 This file contains atom attributes for the EAM model and alloy combination. The
 original file is EAM_code. It is designed to be used with create_eam.py script.
 To add new contribution, just add new AtType instances.
+
+To add a new element:
+1. Create a new AtType instance with the required parameters (re, fe, rhoe, etc.).
+   These parameters are typically obtained from literature (e.g., Zhou et al. 2004).
+2. Add it to the Database dictionary: `Database["Symbol"] = AtType(...)`.
 """
+
 
 import math
 from dataclasses import dataclass

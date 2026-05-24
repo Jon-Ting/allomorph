@@ -17,7 +17,7 @@ from pathlib import Path
 
 import numpy as np
 
-from tnp_gen.eam.eam_database import Database
+from np_gen.eam.eam_database import Database
 
 logger = logging.getLogger(__name__)
 

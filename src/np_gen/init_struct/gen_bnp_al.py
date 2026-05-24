@@ -20,7 +20,7 @@ from ase.io.lammpsdata import read_lammps_data, write_lammps_data
 from ase.visualize import view
 from numpy.random import RandomState, rand, seed
 
-from tnp_gen.constants import (
+from np_gen.constants import (
     BNP_DIR,
     BNP_DISTRIB_LIST,
     DIAMETER_LIST,

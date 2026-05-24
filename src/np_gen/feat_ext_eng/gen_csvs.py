@@ -9,7 +9,7 @@ from multiprocessing import Pool
 from pathlib import Path
 from zipfile import ZipFile
 
-from tnp_gen.constants import TNP_DISTRIB_LIST
+from np_gen.constants import TNP_DISTRIB_LIST
 
 logger = logging.getLogger(__name__)
 

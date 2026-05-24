@@ -9,7 +9,7 @@ from os.path import exists
 
 import pandas as pd
 
-from tnp_gen.constants import ELE_DICT, parse_ele_comb
+from np_gen.constants import ELE_DICT, parse_ele_comb
 
 logger = logging.getLogger(__name__)
 
@@ -40,8 +40,10 @@ def _get_ele_prop_dict(ele_dict=None):
     return prop_dict
 
 
-def generate_headers(elements=("Au", "Pd", "Pt")):
+def generate_headers(elements=None):
     """Programmatically generate the full list of features."""
+    if elements is None:
+        elements = sorted(ELE_DICT.keys())
     headers = [
         "T", "P", "Potential_E", "Kinetic_E", "Total_E",
         "N_atom_total"
@@ -132,8 +134,10 @@ def generate_headers(elements=("Au", "Pd", "Pt")):
 
 
 
-def _build_add_feat_list(elements=("Au", "Pd", "Pt")):
+def _build_add_feat_list(elements=None):
     """Build the list of derived features that will be re-added after dropping."""
+    if elements is None:
+        elements = sorted(ELE_DICT.keys())
     add_feat_list = [
         "Vol_bulk_pack", "Vol_sphere",
         "Curve_1-10", "Curve_11-20", "Curve_21-30", "Curve_31-40", "Curve_41-50",

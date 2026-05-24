@@ -1,7 +1,7 @@
 """Feature extraction and dataset engineering."""
 
-from tnp_gen.feat_ext_eng.gen_csvs import run_ncpac, run_ncpac_parallel, setup_ncpac
-from tnp_gen.feat_ext_eng.merge_features import (
+from np_gen.feat_ext_eng.gen_csvs import run_ncpac, run_ncpac_parallel, setup_ncpac
+from np_gen.feat_ext_eng.merge_features import (
     concat_np_feats,
     generate_headers,
     merge_reformat_data,

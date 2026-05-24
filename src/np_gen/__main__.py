@@ -1,4 +1,4 @@
-from tnp_gen.cli import main
+from np_gen.cli import main
 
 if __name__ == "__main__":
     main()

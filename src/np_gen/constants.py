@@ -33,6 +33,12 @@ ELE_DICT = {
            "rho": 21450, "m": 0.195084, "bulkE": 5.84},
     "Au": {"lc": {"FCC": 4.09}, "radius": 1.44, "mass": 196.97,
            "rho": 19320, "m": 0.196967, "bulkE": 3.81},
+    "Cu": {"lc": {"FCC": 3.61}, "radius": 1.28, "mass": 63.55,
+           "rho": 8960, "m": 0.063546, "bulkE": 3.49},
+    "Ni": {"lc": {"FCC": 3.52}, "radius": 1.25, "mass": 58.69,
+           "rho": 8908, "m": 0.058693, "bulkE": 4.44},
+    "Ag": {"lc": {"FCC": 4.09}, "radius": 1.44, "mass": 107.87,
+           "rho": 10490, "m": 0.107868, "bulkE": 2.95},
 }
 
 DIAMETER_LIST = [10, 15, 20, 25, 30]  # NP diameters of interest (Angstrom)
@@ -42,6 +48,73 @@ TNP_DISTRIB_LIST = [
     "L10R", "CS", "CL10S", "CRALS", "RRAL", "CSRAL", "CSL10", "CRSR", "LL10"
 ]  # TNP distributions of interest
 RATIO_LIST = [20, 40, 60, 80]  # Ratios of interest
+
+
+def update_constants(config):
+    """Update global constants from a dictionary.
+
+    Args:
+        config: Dictionary containing constant names and their new values.
+    """
+    global VACUUM_THICKNESS, RANDOM_DISTRIB_NO
+    if "VACUUM_THICKNESS" in config:
+        VACUUM_THICKNESS = config["VACUUM_THICKNESS"]
+    if "RANDOM_DISTRIB_NO" in config:
+        RANDOM_DISTRIB_NO = config["RANDOM_DISTRIB_NO"]
+
+    # For lists and dicts, we update in-place to preserve references in other modules
+    if "ELE_DICT" in config:
+        ELE_DICT.clear()
+        ELE_DICT.update(validate_ele_dict(config["ELE_DICT"]))
+    if "DIAMETER_LIST" in config:
+        DIAMETER_LIST[:] = config["DIAMETER_LIST"]
+    if "SHAPE_LIST" in config:
+        SHAPE_LIST[:] = config["SHAPE_LIST"]
+    if "BNP_DISTRIB_LIST" in config:
+        BNP_DISTRIB_LIST[:] = config["BNP_DISTRIB_LIST"]
+    if "TNP_DISTRIB_LIST" in config:
+        TNP_DISTRIB_LIST[:] = config["TNP_DISTRIB_LIST"]
+    if "RATIO_LIST" in config:
+        RATIO_LIST[:] = config["RATIO_LIST"]
+
+
+def load_config(path):
+    """Load configuration from a JSON, YAML, or TOML file.
+
+    Args:
+        path: Path to the configuration file.
+
+    Returns:
+        The loaded configuration dictionary.
+    """
+    import json
+    from pathlib import Path
+
+    suffix = Path(path).suffix.lower()
+    if suffix == ".json":
+        with open(path, "r") as f:
+            return json.load(f)
+    elif suffix in (".yaml", ".yml"):
+        try:
+            import yaml
+            with open(path, "r") as f:
+                return yaml.safe_load(f)
+        except ImportError:
+            raise ImportError("PyYAML is required to load YAML config files.")
+    elif suffix == ".toml":
+        try:
+            import tomllib  # Python 3.11+
+        except ImportError:
+            try:
+                import tomli as tomllib
+            except ImportError:
+                raise ImportError(
+                    "tomllib (Python 3.11+) or tomli is required to load TOML config files."
+                )
+        with open(path, "rb") as f:
+            return tomllib.load(f)
+    else:
+        raise ValueError(f"Unsupported config file format: {suffix}")
 
 
 def validate_ele_dict(ele_dict):

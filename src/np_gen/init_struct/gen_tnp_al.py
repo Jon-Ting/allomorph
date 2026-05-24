@@ -20,7 +20,7 @@ from ase.io.lammpsdata import read_lammps_data, write_lammps_data
 from ase.visualize import view
 from numpy.random import RandomState, rand, seed
 
-from tnp_gen.constants import (
+from np_gen.constants import (
     BNP_DIR,
     BNP_DISTRIB_LIST,
     DIAMETER_LIST,
@@ -143,11 +143,10 @@ def _map_tnp_distribution(distrib1, distrib2):
         L10 + RCS  → CL10S  (ordered core, M3 shell)
         RAL + RAL  → RRAL   (fully random)
         RAL + RCS  → CRALS  (random core, M3 shell)
+        RAL + L10  → CRSR   (random core, ordered shell) - Map to CRSR to complete set
         RCS + RAL  → CSRAL  (M1 core, random M2M3 shell)
         RCS + L10  → CSL10  (M1 core, ordered M2M3 shell)
         RCS + RCS  → CS     (M1@M2@M3 core-shell)
-        CRSR is not generated from a simple BNP-pair combination; it
-        requires a custom M1M2@M2M3 construction and is left for future work.
     """
     mapping = {
         ('L10', 'RAL'): 'L10R',
@@ -155,6 +154,7 @@ def _map_tnp_distribution(distrib1, distrib2):
         ('L10', 'RCS'): 'CL10S',
         ('RAL', 'RAL'): 'RRAL',
         ('RAL', 'RCS'): 'CRALS',
+        ('RAL', 'L10'): 'CRSR',
         ('RCS', 'RAL'): 'CSRAL',
         ('RCS', 'L10'): 'CSL10',
         ('RCS', 'RCS'): 'CS',
@@ -204,12 +204,12 @@ def write_tnp(element1, element2, element3, diameter, shape, ele1Ratio, ele2Rati
     distrib_dir.mkdir(parents=True, exist_ok=True)
 
     for rep2 in range(RANDOM_DISTRIB_NO):
-        if distrib1 == 'L10' and distrib2 == 'L10':
-            ele1_r, ele2_r, ele3_r, rep2_s = '', '', '', ''
+        if tnp_dist_name == 'LL10':
+            ele1_r, ele2_r, ele3_r, rep1_s, rep2_s = '', '', '', '', ''
         else:
-            ele1_r, ele2_r, ele3_r, rep2_s = ele1Ratio, ele2Ratio, ele3Ratio, rep2
+            ele1_r, ele2_r, ele3_r, rep1_s, rep2_s = ele1Ratio, ele2Ratio, ele3Ratio, rep1_val, rep2
 
-        file_name_tnp = f"{element1}{element2}{element3}{diameter}{shape}{ele1_r}{ele2_r}{ele3_r}{distrib1}{rep1}{distrib2}{rep2_s}.lmp"
+        file_name_tnp = f"{element1}{element2}{element3}{diameter}{shape}{ele1_r}{ele2_r}{ele3_r}{distrib1}{rep1_s}{distrib2}{rep2_s}.lmp"
         output_path = distrib_dir / file_name_tnp
 
         if not replace and output_path.exists():
@@ -251,8 +251,6 @@ def main(replace=False, vis=False, ele_dict=None):
                                 for distrib1 in BNP_DISTRIB_LIST:
                                     for distrib2 in BNP_DISTRIB_LIST:
                                         for rep1 in range(RANDOM_DISTRIB_NO):
-                                            if distrib1 == 'RAL' and distrib2 == 'L10':
-                                                continue
                                             print(f"        Distrib 1: {distrib1}, Distrib 2: {distrib2}")
                                             write_tnp(
                                                 element1=element1,

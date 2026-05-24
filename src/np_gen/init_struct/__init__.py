@@ -1,6 +1,6 @@
 """Initial nanoparticle structure generation."""
 
-from tnp_gen.constants import (
+from np_gen.constants import (
     BNP_DIR,
     BNP_DISTRIB_LIST,
     DIAMETER_LIST,
@@ -15,10 +15,10 @@ from tnp_gen.constants import (
     TNP_DISTRIB_LIST,
     VACUUM_THICKNESS,
 )
-from tnp_gen.init_struct.gen_bnp_al import gen_bnp, write_bnp
-from tnp_gen.init_struct.gen_bnp_cs import gen_hard_core_shell, write_hard_core_shell
-from tnp_gen.init_struct.gen_mnp import gen_mnp, write_mnp
-from tnp_gen.init_struct.gen_tnp_al import gen_tnp, write_tnp
+from np_gen.init_struct.gen_bnp_al import gen_bnp, write_bnp
+from np_gen.init_struct.gen_bnp_cs import gen_hard_core_shell, write_hard_core_shell
+from np_gen.init_struct.gen_mnp import gen_mnp, write_mnp
+from np_gen.init_struct.gen_tnp_al import gen_tnp, write_tnp
 
 __all__ = [
     "LMP_DATA_DIR",

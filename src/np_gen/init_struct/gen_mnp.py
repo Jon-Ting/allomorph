@@ -30,7 +30,7 @@ from ase.io.lammpsdata import write_lammps_data
 from ase.io.xyz import write_xyz
 from ase.visualize import view
 
-from tnp_gen.constants import (
+from np_gen.constants import (
     DIAMETER_LIST,
     ELE_DICT,
     GOLDEN_RATIO,

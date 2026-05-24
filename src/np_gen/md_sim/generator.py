@@ -33,11 +33,11 @@ def generate_lammps_input(
         tnp_types: List of TNP types to process.
     """
     if tnp_types is None:
-        from tnp_gen.constants import TNP_DISTRIB_LIST
+        from np_gen.constants import TNP_DISTRIB_LIST
         tnp_types = [f"{d}/" for d in TNP_DISTRIB_LIST]
 
     if ele_dict is None:
-        from tnp_gen.constants import ELE_DICT as _ELE_DICT
+        from np_gen.constants import ELE_DICT as _ELE_DICT
         ele_dict = _ELE_DICT
 
     sim_data_path = Path(sim_data_dir)
@@ -98,9 +98,23 @@ def generate_lammps_input(
             element1 = elements[0]
             element2 = elements[1] if len(elements) > 1 else element1
             element3 = elements[2] if len(elements) > 2 else element2
-            logger.info(f"    Elements: {element1}, {element2}, {element3}")
+            logger.info(f"    Elements: {elements}")
 
-            pot_file = eam_path / "setfl_files" / f"{element1}{element2}{element3}.set"
+            # Try to find a suitable EAM file
+            # If there's an exact match for the elements in the filename, use it.
+            # Otherwise, use the first .set file in the directory if it's unique.
+            pot_file_exact = eam_path / "setfl_files" / f"{''.join(elements)}.set"
+            if pot_file_exact.exists():
+                pot_file = pot_file_exact
+            else:
+                # Try permutations or larger sets
+                pot_files = list((eam_path / "setfl_files").glob("*.set"))
+                if len(pot_files) == 1:
+                    pot_file = pot_files[0]
+                else:
+                    # Fallback to the old hardcoded logic if no better option
+                    pot_file = eam_path / "setfl_files" / f"{element1}{element2}{element3}.set"
+
             init_struct_dir = init_struct_base_path / tnp_type.strip('/')
 
             # Variables for substitution
@@ -109,14 +123,18 @@ def generate_lammps_input(
                 "{ELEMENT1}": element1,
                 "{ELEMENT2}": element2,
                 "{ELEMENT3}": element3,
+                "{MAPPING}": " ".join(elements),
                 "{POT_FILE}": str(pot_file),
+                "{TOTAL_DUMPS}": str(total_dumps),
+                "{TOTAL_DUMPS_PLUS_ONE}": str(total_dumps + 1),
+                "{INIT_TEMP}": str(init_temp),
+                "{HEAT_TEMP}": str(heat_temp),
             }
 
             if stage == 0:
                 s0_dump_int = s0_period // total_dumps
                 subs.update({
                     "{INP_DIR_NAME}/": f"{init_struct_dir}/",
-                    "{INIT_TEMP}": str(init_temp),
                     "{S0_PERIOD}": str(s0_period),
                     "{S0_THER_INT}": str(s0_ther_int),
                     "{S0_DUMP_INT}": str(s0_dump_int),
@@ -125,8 +143,6 @@ def generate_lammps_input(
                 s1_period = int((heat_temp - init_temp) / heat_rate * 1000)
                 s1_dump_int = s1_period // total_dumps
                 subs.update({
-                    "{INIT_TEMP}": str(init_temp),
-                    "{HEAT_TEMP}": str(heat_temp),
                     "{S1_PERIOD}": str(s1_period),
                     "{S1_THER_INT}": str(s1_ther_int),
                     "{S1_DUMP_INT}": str(s1_dump_int),
@@ -137,7 +153,6 @@ def generate_lammps_input(
                 s2_dump_int = s2_period // total_dumps
                 subs.update({
                     "{S1_DUMP_INT}": str(s1_dump_int),
-                    "{HEAT_TEMP}": str(heat_temp),
                     "{S2_PERIOD}": str(s2_period),
                     "{S2_THER_INT}": str(s2_ther_int),
                     "{S2_DUMP_INT}": str(s2_dump_int),

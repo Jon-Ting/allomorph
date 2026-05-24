@@ -1,27 +1,20 @@
-"""Command-line interface for tnp-gen."""
+"""Command-line interface for np-gen."""
 
 import argparse
 import sys
 
-from tnp_gen.constants import parse_ele_comb
-from tnp_gen.eam.create_eam import create_eam as _create_eam
-from tnp_gen.feat_ext_eng.gen_csvs import run_ncpac_parallel, setup_ncpac
-from tnp_gen.feat_ext_eng.merge_features import concat_np_feats, generate_headers, run_merge_reformat_parallel
-from tnp_gen.init_struct.gen_bnp_al import main as gen_bnp_main
-from tnp_gen.init_struct.gen_bnp_cs import write_hard_core_shell as gen_bnp_cs_main
-from tnp_gen.init_struct.gen_mnp import main as gen_mnp_main
-from tnp_gen.init_struct.gen_tnp_al import main as gen_tnp_main
-from tnp_gen.md_sim.generator import generate_lammps_input
-from tnp_gen.md_sim.manager import generate_job_list
-from tnp_gen.md_sim.setup import setup_md_sim
-from tnp_gen.md_sim.submission import submit_jobs
+from np_gen.constants import load_config, parse_ele_comb, update_constants
 
 
 def main(argv=None):
-    """Entry point for the tnp-gen CLI."""
+    """Entry point for the np-gen CLI."""
     parser = argparse.ArgumentParser(
-        prog="tnp-gen",
+        prog="np-gen",
         description="Toolkit for generating monometallic to trimetallic nanoparticle structural datasets.",
+    )
+    parser.add_argument(
+        "--config",
+        help="Path to a configuration file (JSON, YAML, or TOML) to override default constants.",
     )
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
@@ -131,7 +124,7 @@ def main(argv=None):
     feat_setup_parser.add_argument("--target-dir", required=True, help="Target directory for NCPac.")
     feat_setup_parser.add_argument("--exe", required=True, help="Path to NCPac executable.")
     feat_setup_parser.add_argument("--inp", required=True, help="Path to NCPac template input file.")
-    feat_setup_parser.add_argument("--ele-comb", default="AuPtPd", help="Element combination.")
+    feat_setup_parser.add_argument("--ele-comb", help="Element combination (e.g. AuPtPd). If omitted, inferred from sim-dir.")
 
     # feat-ext run
     feat_run_parser = feat_subparsers.add_parser("run", help="Run NCPac in parallel.")
@@ -143,7 +136,7 @@ def main(argv=None):
     feat_merge_parser.add_argument("--md-out", required=True, help="Path to MDout.csv.")
     feat_merge_parser.add_argument("--feat-dir", required=True, help="Directory with raw NCPac features.")
     feat_merge_parser.add_argument("--output-dir", required=True, help="Directory to store merged features.")
-    feat_merge_parser.add_argument("--ele-comb", default="AuPtPd", help="Element combination.")
+    feat_merge_parser.add_argument("--ele-comb", help="Element combination (e.g. AuPtPd).")
 
     # feat-ext concat
     feat_concat_parser = feat_subparsers.add_parser("concat", help="Concatenate all merged features into one CSV.")
@@ -154,6 +147,10 @@ def main(argv=None):
 
     args = parser.parse_args(argv)
 
+    if args.config:
+        config = load_config(args.config)
+        update_constants(config)
+
     if args.command is None:
         parser.print_help()
         sys.exit(1)
@@ -163,6 +160,7 @@ def main(argv=None):
 
 def _eam_cmd(args):
     """Run the EAM creation command."""
+    from np_gen.eam.create_eam import create_eam as _create_eam
     argv = []
     argv.extend(["-n", *args.name])
     argv.extend(["-nr", str(args.nr)])
@@ -173,6 +171,11 @@ def _eam_cmd(args):
 
 def _init_struct_cmd(args):
     """Run the initial structure generation command."""
+    from np_gen.init_struct.gen_bnp_al import main as gen_bnp_main
+    from np_gen.init_struct.gen_bnp_cs import write_hard_core_shell as gen_bnp_cs_main
+    from np_gen.init_struct.gen_mnp import main as gen_mnp_main
+    from np_gen.init_struct.gen_tnp_al import main as gen_tnp_main
+
     if args.stage in ("mnp", "all"):
         print("=== Generating monometallic nanoparticles (MNP) ===")
         gen_mnp_main(replace=args.replace, vis=args.vis)
@@ -189,6 +192,11 @@ def _init_struct_cmd(args):
 
 def _md_sim_cmd(args):
     """Run the MD simulation management commands."""
+    from np_gen.md_sim.generator import generate_lammps_input
+    from np_gen.md_sim.manager import generate_job_list
+    from np_gen.md_sim.setup import setup_md_sim
+    from np_gen.md_sim.submission import submit_jobs
+
     if args.action == "setup":
         setup_md_sim(args.init_dir, args.target_dir)
     elif args.action == "gen-input":
@@ -205,6 +213,13 @@ def _md_sim_cmd(args):
 
 def _feat_ext_cmd(args):
     """Run the feature extraction management commands."""
+    from np_gen.feat_ext_eng.gen_csvs import run_ncpac_parallel, setup_ncpac
+    from np_gen.feat_ext_eng.merge_features import (
+        concat_np_feats,
+        generate_headers,
+        run_merge_reformat_parallel,
+    )
+
     if args.action == "setup":
         setup_ncpac(args.sim_dir, args.target_dir, args.exe, args.inp, ele_comb=args.ele_comb)
     elif args.action == "run":
@@ -217,6 +232,11 @@ def _feat_ext_cmd(args):
                     working_list.append((str(d), d.name))
         run_ncpac_parallel(working_list, args.final_dir)
     elif args.action == "merge":
+        if args.ele_comb is None:
+            # Try to infer from md-out's directory name
+            args.ele_comb = Path(args.md_out).parent.name
+            if not args.ele_comb or len(args.ele_comb) < 2:
+                args.ele_comb = "AuPtPd"
         elements = parse_ele_comb(args.ele_comb)
         headers_list = generate_headers(elements)
         run_merge_reformat_parallel(
