@@ -5,15 +5,14 @@ This script demonstrates how to use the np-gen library to generate
 monometallic, bimetallic, and trimetallic nanoparticles with arbitrary elements.
 """
 
-import os
-from np_gen.init_struct.gen_mnp import gen_mnp
-from np_gen.init_struct.gen_bnp_al import gen_bnp
-from np_gen.init_struct.gen_tnp_al import gen_tnp
 from np_gen.constants import ELE_DICT, update_constants, validate_ele_dict
-# from ase.visualize import view
+from np_gen.init_struct.gen_bnp_al import gen_bnp
+from np_gen.init_struct.gen_mnp import gen_mnp
+from np_gen.init_struct.gen_tnp_al import gen_tnp
 
 
 def main():
+    """Main function to demonstrate the workflow."""
     print("=== Custom Configuration ===")
     # You can define custom elements and update the global configuration
     custom_ele_dict = {
@@ -26,7 +25,7 @@ def main():
     }
     # Validate before updating
     validate_ele_dict(custom_ele_dict)
-    
+
     # Update global constants (this affects all modules using ELE_DICT)
     update_constants({"ELE_DICT": custom_ele_dict, "RANDOM_DISTRIB_NO": 2})
 
