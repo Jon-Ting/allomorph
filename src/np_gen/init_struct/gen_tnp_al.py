@@ -88,7 +88,11 @@ def _prob_array(prob, indices):
         return None
     arr = np.array(prob)[indices]
     s = arr.sum()
-    return arr / s if s > 0 else None
+    if s > 0 and np.isfinite(s):
+        p = arr / s
+        if np.all(np.isfinite(p)):
+            return p
+    return None
 
 
 def gen_tnp(obj, element1, element2, element3, ele1Ratio, ele2Ratio, ele3Ratio, distrib1, distrib2, rseed=0, shape=None, ele_dict=None):
@@ -170,14 +174,14 @@ def write_tnp(element1, element2, element3, diameter, shape, ele1Ratio, ele2Rati
         mnp_path = mnp_dir / file_name_mnp
         if not mnp_path.exists():
             return
-        bnp = read_lammps_data(str(mnp_path), style='atomic', units='metal')
+        bnp = read_lammps_data(str(mnp_path), atom_style='atomic', units='metal')
         bnp.set_chemical_symbols(symbols=[element1] * len(bnp))
     else:
         file_name_bnp = f"{element1}{element2}{diameter}{shape}{bnpRatio1}{bnpRatio2}{distrib1}{rep1_val}.lmp"
         bnp_path = bnp_dir / bnp_dist_name / file_name_bnp
         if not bnp_path.exists():
             return
-        bnp = read_lammps_data(str(bnp_path), style='atomic', units='metal')
+        bnp = read_lammps_data(str(bnp_path), atom_style='atomic', units='metal')
         # Map atom types back to symbols for processing
         symbols = []
         for i in range(len(bnp)):

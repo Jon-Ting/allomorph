@@ -36,43 +36,39 @@ from np_gen.constants import (
 )
 
 
-def rand_conv(obj, element2, ele2Ratio, rseed, prob):
+def rand_conv(obj, element1, element2, ele2Ratio, rseed, prob):
     """Randomly convert elements of atoms until specified ratio is reached"""
-    elements = np.array(list(obj.symbols.species()))
-    element1 = elements[elements != element2][0]
     ele1Arr, ele2Arr = obj.symbols.search(element1), obj.symbols.search(element2)
     ele2IdealNum = round(ele2Ratio / 100 * len(obj))
     diff = len(ele2Arr) - ele2IdealNum
     (convEleArr, targetEle) = (ele1Arr, element2) if diff < 0 else (ele2Arr, element1)
     randGen = RandomState(rseed)
-    probArr = np.array(prob)[convEleArr] / np.array(prob)[convEleArr].sum() if len(prob) > 0 else None
+    probArr = None
+    if len(prob) > 0:
+        weights = np.array(prob)[convEleArr]
+        total_weight = weights.sum()
+        if total_weight > 0:
+            probArr = weights / total_weight
     idxArr = randGen.choice(a=convEleArr, size=abs(diff), replace=False, p=probArr)
     for idx in idxArr:
         obj[idx].symbol = targetEle
     return obj
 
 
-def gen_bnp(obj, element2, shape, ratio2, distrib, rseed, ele_dict=None):
+def gen_bnp(obj, element1, element2, shape, ratio2, distrib, rseed, ele_dict=None):
     if ele_dict is None:
         ele_dict = ELE_DICT
     probList = []
     if distrib == 'RAL':
-        seed(rseed)
-        randList = rand(len(obj))  # Uniform distribution
-        for (i, atom) in enumerate(obj):
-            if randList[i] > (100 - ratio2) / 100:
-                atom.symbol = element2
+        # Handled by rand_conv if 'R' in distrib
+        pass
 
     elif distrib == 'RCS':
         probList = calc_rcs_prob(obj, shape)
-        seed(rseed)
-        randList = rand(len(obj))
-        for (atomIdx, atom) in enumerate(obj):
-            if randList[atomIdx] < probList[atomIdx]:
-                obj[atomIdx].symbol = element2
+        # Handled by rand_conv if 'R' in distrib
 
     elif distrib in ['L10', 'L12', 'RL10', 'RL12']:
-        lc = ele_dict[obj[0].symbol]['lc']['FCC']
+        lc = ele_dict[element1]['lc']['FCC']
         vacOffset = VACUUM_THICKNESS / 2
         for (i, atom) in enumerate(obj):
             yModulo = round((round(obj.positions[i][1], 3) - vacOffset) % lc, 3)
@@ -87,7 +83,7 @@ def gen_bnp(obj, element2, shape, ratio2, distrib, rseed, ele_dict=None):
         raise Exception('Specified distribution type unrecognised!')
 
     if 'R' in distrib:
-        obj = rand_conv(obj=obj, element2=element2, ele2Ratio=ratio2, rseed=rseed, prob=probList)
+        obj = rand_conv(obj=obj, element1=element1, element2=element2, ele2Ratio=ratio2, rseed=rseed, prob=probList)
     return obj
 
 
@@ -105,7 +101,7 @@ def write_bnp(element1, element2, diameter, shape, ratio2, distrib, replace=Fals
         # print(f"      MNP file {mnp_path} not found, skipping...")
         return
 
-    mnp = read_lammps_data(str(mnp_path), style='atomic', units='metal')
+    mnp = read_lammps_data(str(mnp_path), atom_style='atomic', units='metal')
     mnp.set_chemical_symbols(symbols=[element1] * len(mnp))
     ratio1 = 100 - ratio2
 
@@ -124,7 +120,7 @@ def write_bnp(element1, element2, diameter, shape, ratio2, distrib, replace=Fals
         if not replace and output_path.exists():
             continue
 
-        bnp = gen_bnp(obj=mnp.copy(), element2=element2, shape=shape, ratio2=ratio2, distrib=distrib, rseed=rep if 'R' in distrib else 0, ele_dict=ele_dict)
+        bnp = gen_bnp(obj=mnp.copy(), element1=element1, element2=element2, shape=shape, ratio2=ratio2, distrib=distrib, rseed=rep if 'R' in distrib else 0, ele_dict=ele_dict)
         write_lammps_data(str(output_path), atoms=bnp, units='metal', atom_style='atomic')
         print(f"      Generated {file_name_bnp}, formula: {bnp.get_chemical_formula()}")
 
