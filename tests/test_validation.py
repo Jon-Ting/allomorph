@@ -3,9 +3,9 @@
 import numpy as np
 import pytest
 
-from tnp_gen.constants import ELE_DICT
-from tnp_gen.init_struct.gen_bnp_cs import gen_hard_core_shell
-from tnp_gen.init_struct.gen_mnp import gen_mnp
+from np_gen.constants import ELE_DICT
+from np_gen.init_struct.gen_bnp_cs import gen_hard_core_shell
+from np_gen.init_struct.gen_mnp import gen_mnp
 
 
 def get_min_dist(atoms):
@@ -16,7 +16,7 @@ def get_min_dist(atoms):
     return np.min(masked_dists)
 
 
-@pytest.mark.parametrize("element", ["Au", "Pd", "Pt"])
+@pytest.mark.parametrize("element", ["Au", "Pd", "Pt", "Cu", "Ni"])
 @pytest.mark.parametrize("shape", ["OT", "SP", "IC", "CU", "TH", "RD", "TO", "CO"])
 def test_mnp_physical_validity(element, shape):
     """Verify that generated MNPs have reasonable interatomic distances."""

@@ -2,8 +2,8 @@
 
 import numpy as np
 
-from tnp_gen.eam.create_eam import embed, pair, prof
-from tnp_gen.eam.eam_database import AtType, Database
+from np_gen.eam.create_eam import embed, pair, prof
+from np_gen.eam.eam_database import AtType, Database
 
 
 def test_database_has_expected_elements():
@@ -51,8 +51,11 @@ def test_pair_mixed_alloy():
     assert psi.shape == r.shape
 
 
-def test_embed_returns_array():
-    rho = np.linspace(0.0, 50.0, 100)
-    emb = embed("Au", rho)
-    assert isinstance(emb, np.ndarray)
-    assert emb.shape == rho.shape
+def test_pair_ni_pd_pt():
+    """Verify that Ni-Pd-Pt components can be calculated."""
+    r = np.linspace(0.5, 5.0, 10)
+    for e1 in ["Ni", "Pd", "Pt"]:
+        for e2 in ["Ni", "Pd", "Pt"]:
+            psi = pair(e1, e2, r)
+            assert isinstance(psi, np.ndarray)
+            assert psi.shape == r.shape

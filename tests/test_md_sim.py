@@ -1,6 +1,6 @@
-from tnp_gen.md_sim.generator import generate_lammps_input
-from tnp_gen.md_sim.manager import generate_job_list, get_config_value, update_config
-from tnp_gen.md_sim.setup import setup_md_sim
+from np_gen.md_sim.generator import generate_lammps_input
+from np_gen.md_sim.manager import generate_job_list, get_config_value, update_config
+from np_gen.md_sim.setup import setup_md_sim
 
 
 def test_setup_md_sim(tmp_path):
@@ -85,16 +85,28 @@ def test_config_management(tmp_path):
     update_config(config_file, "S1ok", "false")
     assert get_config_value(config_file, "S1ok") == "false"
 
-def test_generate_job_list(tmp_path):
+def test_generate_lammps_input_cu_ag(tmp_path):
+    """Test LAMMPS input generation for CuAg nanoparticle."""
     sim_dir = tmp_path / "MDsim"
-    np_dir = sim_dir / "Type1" / "AuPdPt30_test"
+    np_dir = sim_dir / "BNP" / "CuAg20_test"
     np_dir.mkdir(parents=True)
-    (np_dir / "AuPdPt30_testS0.in").touch()
+    (np_dir / "CuAg20_test.lmp").write_text("atoms 50")
 
-    job_list = tmp_path / "jobList"
+    init_dir = tmp_path / "InitStruct"
+    template_dir = tmp_path / "templates"
+    template_dir.mkdir()
+    (template_dir / "annealS0.in").write_text("mapping {MAPPING}")
 
-    generate_job_list(stage=0, sim_data_dir=str(sim_dir), job_list_file=str(job_list))
+    generate_lammps_input(
+        stage=0,
+        sim_data_dir=str(sim_dir),
+        init_struct_base_dir=str(init_dir),
+        eam_dir=str(tmp_path / "EAM"),
+        template_dir=str(template_dir),
+        tnp_types=["BNP/"]
+    )
 
-    assert job_list.exists()
-    content = job_list.read_text()
-    assert "AuPdPt30_testS0" in content
+    in_file = np_dir / "CuAg20_testS0.in"
+    assert in_file.exists()
+    content = in_file.read_text()
+    assert "Cu Ag" in content

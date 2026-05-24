@@ -2,7 +2,7 @@
 
 
 def test_import_constants():
-    from tnp_gen.constants import (
+    from np_gen.constants import (
         ELE_DICT,
         SHAPE_LIST,
     )
@@ -17,7 +17,7 @@ def test_import_constants():
 
 
 def test_import_eam():
-    from tnp_gen.eam import Database
+    from np_gen.eam import Database
 
     assert "Au" in Database
     assert "Pd" in Database
@@ -25,7 +25,7 @@ def test_import_eam():
 
 
 def test_import_init_struct():
-    from tnp_gen.init_struct import (
+    from np_gen.init_struct import (
         gen_bnp,
         gen_mnp,
         gen_tnp,
@@ -43,7 +43,7 @@ def test_import_init_struct():
 
 
 def test_import_feat_ext_eng():
-    from tnp_gen.feat_ext_eng import (
+    from np_gen.feat_ext_eng import (
         concat_np_feats,
         merge_reformat_data,
         run_ncpac,
@@ -57,6 +57,6 @@ def test_import_feat_ext_eng():
 
 
 def test_cli_import():
-    from tnp_gen.cli import main
+    from np_gen.cli import main
 
     assert callable(main)

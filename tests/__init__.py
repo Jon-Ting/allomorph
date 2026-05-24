@@ -1,1 +1,1 @@
-"""Tests for tnp-gen."""
+"""Tests for np-gen."""
