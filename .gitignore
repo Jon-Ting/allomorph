@@ -52,6 +52,7 @@ htmlcov/
 MNP/
 BNP/
 TNP/
+docs/_build/
 
 # Legacy directories
 InitStruct/*NP/

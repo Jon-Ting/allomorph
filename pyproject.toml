@@ -49,6 +49,8 @@ dev = [
     "sphinx",
     "sphinx-rtd-theme",
     "myst-parser",
+    "myst-nb",
+    "sphinx-autoapi",
     "jupyterlab",
 ]
 
