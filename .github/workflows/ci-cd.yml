@@ -21,7 +21,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --extra dev
 
       - name: Run tests
         run: PYTHONPATH=./src:./extras uv run pytest tests/ -v --cov=allomorph --cov-report=xml
@@ -59,7 +59,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --extra dev
 
       - name: Use Python Semantic Release to prepare release
         id: release
