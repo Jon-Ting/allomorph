@@ -74,7 +74,7 @@ jobs:
       # Wipe the generated attestations so the next step can generate its own fresh pair
       - name: Clean up TestPyPI Attestations
         if: steps.release.outputs.released == 'true'
-        run: rm -f dist/*.attestation
+        run: sudo rm -f dist/*.attestation
 
       - name: Publish to PyPI
         if: steps.release.outputs.released == 'true'
