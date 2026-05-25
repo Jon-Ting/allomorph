@@ -19,7 +19,7 @@ from pathlib import Path
 import numpy as np
 from ase.io.lammpsdata import read_lammps_data, write_lammps_data
 from ase.visualize import view
-from numpy.random import RandomState, rand, seed
+from numpy.random import RandomState
 
 from allomorph.constants import (
     BNP_DIR,
@@ -56,6 +56,7 @@ def rand_conv(obj, element1, element2, ele2Ratio, rseed, prob):
 
 
 def gen_bnp(obj, element1, element2, shape, ratio2, distrib, rseed, ele_dict=None):
+    """Generates a BNP alloy structure based on specified distribution type."""
     if ele_dict is None:
         ele_dict = ELE_DICT
     probList = []
@@ -125,7 +126,7 @@ def write_bnp(element1, element2, diameter, shape, ratio2, distrib, replace=Fals
         print(f"      Generated {file_name_bnp}, formula: {bnp.get_chemical_formula()}")
 
         if vis:
-            view(bnp)
+            view(bnp, block=True)
         if 'R' not in distrib:
             break
 
@@ -147,7 +148,12 @@ def main(replace=False, vis=False, ele_dict=None):
                         for distrib in BNP_DISTRIB_LIST:
                             work_items.append((element, element2, diameter, shape, ratio2, distrib, replace, vis, ele_dict))
 
-    if len(work_items) > 1:
+    # Run in parallel unless visualization is requested
+    if vis:
+        print("  Visualization enabled: running serially...")
+        for item in work_items:
+            write_bnp(*item)
+    elif len(work_items) > 1:
         with Pool() as p:
             p.starmap(write_bnp, work_items)
     elif work_items:

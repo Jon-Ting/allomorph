@@ -46,9 +46,10 @@ dev = [
     "pytest>=7.0",
     "pytest-cov",
     "ruff",
-    "mkdocs",
-    "mkdocs-material",
-    "mkdocstrings[python]",
+    "sphinx",
+    "sphinx-rtd-theme",
+    "myst-parser",
+    "jupyterlab",
 ]
 
 [project.scripts]
@@ -83,3 +84,6 @@ ignore = ["E501"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.ruff.format]
+preview = true

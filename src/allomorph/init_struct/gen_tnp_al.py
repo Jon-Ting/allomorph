@@ -95,7 +95,10 @@ def _prob_array(prob, indices):
     return None
 
 
-def gen_tnp(obj, element1, element2, element3, ele1Ratio, ele2Ratio, ele3Ratio, distrib1, distrib2, rseed=0, shape=None, ele_dict=None):
+def gen_tnp(
+    obj, element1, element2, element3, ele1Ratio, ele2Ratio, ele3Ratio, distrib1, distrib2, rseed=0, shape=None, ele_dict=None
+):
+    """Generates a TNP alloy structure based on specified distribution types."""
     if ele_dict is None:
         ele_dict = ELE_DICT
     prob_list = []
@@ -210,7 +213,7 @@ def write_tnp(element1, element2, element3, diameter, shape, ele1Ratio, ele2Rati
         print(f"          Generated {file_name_tnp}, formula: {tnp.get_chemical_formula()}")
 
         if vis:
-            view(tnp)
+            view(tnp, block=True)
         if distrib1 == 'L10' and distrib2 == 'L10':
             break
 
@@ -241,7 +244,12 @@ def main(replace=False, vis=False, ele_dict=None):
                                         for rep1 in range(RANDOM_DISTRIB_NO):
                                             work_items.append((element1, element2, element3, diameter, shape, ratio1, ratio2, ratio3, distrib1, distrib2, rep1, replace, vis, ele_dict))
 
-    if len(work_items) > 1:
+    # Run in parallel unless visualization is requested
+    if vis:
+        print("  Visualization enabled: running serially...")
+        for item in work_items:
+            write_tnp(*item)
+    elif len(work_items) > 1:
         with Pool() as p:
             p.starmap(write_tnp, work_items)
     elif work_items:

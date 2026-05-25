@@ -6,7 +6,7 @@ AlloMorph is a Python toolkit for generating initial structural models of monome
 
 ## Installation
 
-This package uses [uv](https://docs.astral.sh/uv/) for dependency management and packaging.
+This package uses [uv](https://docs.astral.sh/uv/) for dependency management and packaging. For detailed information on external tool requirements (LAMMPS, NCPac, etc.), see [DEPENDENCIES.md](DEPENDENCIES.md).
 
 ```bash
 # Clone the repository
