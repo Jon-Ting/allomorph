@@ -1,0 +1,225 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Usage &mdash; allomorph 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            allomorph
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Usage</a><ul>
+<li><a class="reference internal" href="#command-line-interface">Command-Line Interface</a><ul>
+<li><a class="reference internal" href="#initial-structure-generation">Initial Structure Generation</a></li>
+<li><a class="reference internal" href="#eam-potential-generation">EAM Potential Generation</a></li>
+<li><a class="reference internal" href="#md-simulation-management">MD Simulation Management</a></li>
+<li><a class="reference internal" href="#feature-extraction">Feature Extraction</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#python-api">Python API</a><ul>
+<li><a class="reference internal" href="#monometallic-nanoparticle">Monometallic nanoparticle</a></li>
+<li><a class="reference internal" href="#using-a-custom-element-dictionary">Using a custom element dictionary</a></li>
+<li><a class="reference internal" href="#parsing-element-combination-strings">Parsing element-combination strings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">allomorph</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Usage</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/usage.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">allomorph</span></code> provides both a command-line interface (CLI) and a Python API.</p>
+<section id="command-line-interface">
+<h2>Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h2>
+<p>The CLI is the easiest way to run the full workflow.</p>
+<section id="initial-structure-generation">
+<h3>Initial Structure Generation<a class="headerlink" href="#initial-structure-generation" title="Link to this heading"></a></h3>
+<p>Generate monometallic, bimetallic (alloy and core-shell), and trimetallic nanoparticles:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate all stages (MNP → BNP → CS → TNP)</span>
+allomorph<span class="w"> </span>init-struct<span class="w"> </span>--stage<span class="w"> </span>all
+
+<span class="c1"># Or run individual stages</span>
+allomorph<span class="w"> </span>init-struct<span class="w"> </span>--stage<span class="w"> </span>mnp<span class="w">   </span><span class="c1"># monometallic</span>
+allomorph<span class="w"> </span>init-struct<span class="w"> </span>--stage<span class="w"> </span>bnp<span class="w">   </span><span class="c1"># bimetallic alloy</span>
+allomorph<span class="w"> </span>init-struct<span class="w"> </span>--stage<span class="w"> </span>cs<span class="w">    </span><span class="c1"># bimetallic core-shell</span>
+allomorph<span class="w"> </span>init-struct<span class="w"> </span>--stage<span class="w"> </span>tnp<span class="w">   </span><span class="c1"># trimetallic alloy</span>
+</pre></div>
+</div>
+<p>The default element set is <strong>Au, Pt, Pd</strong>. You can override this via the Python API (see below).</p>
+</section>
+<section id="eam-potential-generation">
+<h3>EAM Potential Generation<a class="headerlink" href="#eam-potential-generation" title="Link to this heading"></a></h3>
+<p>Create alloy potential files for LAMMPS. The EAM module already accepts arbitrary elements:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Trimetallic</span>
+allomorph<span class="w"> </span>eam<span class="w"> </span>--names<span class="w"> </span>Au<span class="w"> </span>Pt<span class="w"> </span>Pd
+
+<span class="c1"># Bimetallic</span>
+allomorph<span class="w"> </span>eam<span class="w"> </span>--names<span class="w"> </span>Cu<span class="w"> </span>Ag
+</pre></div>
+</div>
+</section>
+<section id="md-simulation-management">
+<h3>MD Simulation Management<a class="headerlink" href="#md-simulation-management" title="Link to this heading"></a></h3>
+<p>Set up and manage LAMMPS simulations:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setup directories</span>
+allomorph<span class="w"> </span>md-sim<span class="w"> </span>setup<span class="w"> </span>--init-dir<span class="w"> </span>InitStruct/TNP<span class="w"> </span>--target-dir<span class="w"> </span>MDsim_runs
+
+<span class="c1"># Generate LAMMPS input files</span>
+allomorph<span class="w"> </span>md-sim<span class="w"> </span>gen-input<span class="w"> </span>--stage<span class="w"> </span><span class="m">0</span><span class="w"> </span>--sim-dir<span class="w"> </span>MDsim<span class="w"> </span>--init-dir<span class="w"> </span>InitStruct<span class="w"> </span>--eam-dir<span class="w"> </span>EAM<span class="w"> </span>--template-dir<span class="w"> </span>templates
+
+<span class="c1"># Generate job list</span>
+allomorph<span class="w"> </span>md-sim<span class="w"> </span>gen-joblist<span class="w"> </span>--stage<span class="w"> </span><span class="m">1</span><span class="w"> </span>--sim-dir<span class="w"> </span>MDsim_runs
+</pre></div>
+</div>
+</section>
+<section id="feature-extraction">
+<h3>Feature Extraction<a class="headerlink" href="#feature-extraction" title="Link to this heading"></a></h3>
+<p>Set up and run NCPac feature extraction:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setup NCPac directories</span>
+allomorph<span class="w"> </span>feat-ext<span class="w"> </span>setup<span class="w"> </span>--sim-dir<span class="w"> </span>MDsim<span class="w"> </span>--target-dir<span class="w"> </span>NCPac<span class="w"> </span>--exe<span class="w"> </span>path/to/NCPac.exe<span class="w"> </span>--inp<span class="w"> </span>path/to/NCPac.inp
+
+<span class="c1"># Run NCPac in parallel</span>
+allomorph<span class="w"> </span>feat-ext<span class="w"> </span>run<span class="w"> </span>--target-dir<span class="w"> </span>NCPac<span class="w"> </span>--final-dir<span class="w"> </span>Features
+
+<span class="c1"># Merge features with MD outputs</span>
+allomorph<span class="w"> </span>feat-ext<span class="w"> </span>merge<span class="w"> </span>--md-out<span class="w"> </span>MDout.csv<span class="w"> </span>--feat-dir<span class="w"> </span>Features<span class="w"> </span>--output-dir<span class="w"> </span>Merged<span class="w"> </span>--ele-comb<span class="w"> </span>AuPtPd
+</pre></div>
+</div>
+</section>
+</section>
+<section id="python-api">
+<h2>Python API<a class="headerlink" href="#python-api" title="Link to this heading"></a></h2>
+<p>You can also use the library directly in your Python scripts.</p>
+<section id="monometallic-nanoparticle">
+<h3>Monometallic nanoparticle<a class="headerlink" href="#monometallic-nanoparticle" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">allomorph.init_struct.gen_mnp</span><span class="w"> </span><span class="kn">import</span> <span class="n">gen_mnp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">allomorph.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ELE_DICT</span>
+
+<span class="c1"># Generate an Au octahedron</span>
+<span class="n">atoms</span> <span class="o">=</span> <span class="n">gen_mnp</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="s1">&#39;OT&#39;</span><span class="p">,</span> <span class="n">diameter</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;Au&#39;</span><span class="p">,</span> <span class="n">latConst</span><span class="o">=</span><span class="n">ELE_DICT</span><span class="p">[</span><span class="s1">&#39;Au&#39;</span><span class="p">][</span><span class="s1">&#39;lc&#39;</span><span class="p">][</span><span class="s1">&#39;FCC&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of atoms: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="using-a-custom-element-dictionary">
+<h3>Using a custom element dictionary<a class="headerlink" href="#using-a-custom-element-dictionary" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">allomorph.init_struct.gen_mnp</span><span class="w"> </span><span class="kn">import</span> <span class="n">main</span> <span class="k">as</span> <span class="n">gen_mnp_main</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">allomorph.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_ele_dict</span>
+
+<span class="c1"># Define your own elements</span>
+<span class="n">custom_ele_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Cu&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;lc&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;FCC&quot;</span><span class="p">:</span> <span class="mf">3.61</span><span class="p">},</span> <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mf">1.28</span><span class="p">,</span> <span class="s2">&quot;mass&quot;</span><span class="p">:</span> <span class="mf">63.55</span><span class="p">,</span>
+           <span class="s2">&quot;rho&quot;</span><span class="p">:</span> <span class="mi">8960</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">:</span> <span class="mf">0.06355</span><span class="p">,</span> <span class="s2">&quot;bulkE&quot;</span><span class="p">:</span> <span class="mf">3.49</span><span class="p">},</span>
+    <span class="s2">&quot;Ag&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;lc&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;FCC&quot;</span><span class="p">:</span> <span class="mf">4.09</span><span class="p">},</span> <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mf">1.44</span><span class="p">,</span> <span class="s2">&quot;mass&quot;</span><span class="p">:</span> <span class="mf">107.87</span><span class="p">,</span>
+           <span class="s2">&quot;rho&quot;</span><span class="p">:</span> <span class="mi">10490</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">:</span> <span class="mf">0.10787</span><span class="p">,</span> <span class="s2">&quot;bulkE&quot;</span><span class="p">:</span> <span class="mf">2.95</span><span class="p">},</span>
+    <span class="s2">&quot;Au&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;lc&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;FCC&quot;</span><span class="p">:</span> <span class="mf">4.09</span><span class="p">},</span> <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mf">1.44</span><span class="p">,</span> <span class="s2">&quot;mass&quot;</span><span class="p">:</span> <span class="mf">196.97</span><span class="p">,</span>
+           <span class="s2">&quot;rho&quot;</span><span class="p">:</span> <span class="mi">19320</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">:</span> <span class="mf">0.196967</span><span class="p">,</span> <span class="s2">&quot;bulkE&quot;</span><span class="p">:</span> <span class="mf">3.81</span><span class="p">},</span>
+<span class="p">}</span>
+<span class="n">validate_ele_dict</span><span class="p">(</span><span class="n">custom_ele_dict</span><span class="p">)</span>
+<span class="n">gen_mnp_main</span><span class="p">(</span><span class="n">ele_dict</span><span class="o">=</span><span class="n">custom_ele_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="parsing-element-combination-strings">
+<h3>Parsing element-combination strings<a class="headerlink" href="#parsing-element-combination-strings" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">allomorph.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_ele_comb</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">parse_ele_comb</span><span class="p">(</span><span class="s2">&quot;AuPtPd&quot;</span><span class="p">)</span>
+<span class="c1"># → [&#39;Au&#39;, &#39;Pt&#39;, &#39;Pd&#39;]</span>
+
+<span class="n">elements</span> <span class="o">=</span> <span class="n">parse_ele_comb</span><span class="p">(</span><span class="s2">&quot;CuAgAu&quot;</span><span class="p">)</span>
+<span class="c1"># → [&#39;Cu&#39;, &#39;Ag&#39;, &#39;Au&#39;]</span>
+</pre></div>
+</div>
+<p>For more detailed API information, see the <a class="reference internal" href="api.html"><span class="std std-doc">API Reference</span></a>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Jonathan Yik Chang Ting.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
