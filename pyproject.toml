@@ -59,8 +59,8 @@ dev = [
 allomorph = "allomorph.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/jonathan-ting/tnp-gen"
-"Bug Tracker" = "https://github.com/jonathan-ting/tnp-gen/issues"
+Homepage = "https://github.com/jonathan-ting/allomorph"
+"Bug Tracker" = "https://github.com/jonathan-ting/allomorph/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/allomorph"]
