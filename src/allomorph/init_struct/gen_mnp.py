@@ -253,8 +253,12 @@ def main(replace=False, vis=False, ele_dict=None):
             for shape in SHAPE_LIST:
                 work_items.append((element, diameter, lat_const, shape, replace, vis, custom_shapes))
 
-    # Run in parallel
-    if len(work_items) > 1:
+    # Run in parallel unless visualization is requested
+    if vis:
+        print("  Visualization enabled: running serially...")
+        for item in work_items:
+            write_mnp(*item)
+    elif len(work_items) > 1:
         with Pool() as p:
             p.starmap(write_mnp, work_items)
     elif work_items:

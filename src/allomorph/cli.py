@@ -49,6 +49,10 @@ def main(argv=None):
         config = load_config(args.config)
         update_constants(config)
 
+    if args.vis:
+        print("Warning: --vis flag enabled. Visualization will run serially to prevent system hang.")
+        print("Many windows may be opened sequentially. Close one to see the next.")
+
     if args.command is None:
         parser.print_help()
         sys.exit(1)
