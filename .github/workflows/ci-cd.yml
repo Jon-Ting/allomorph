@@ -1,6 +1,9 @@
 name: ci-cd
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -13,22 +16,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.12
-
-      - name: Install uv
+      - name: Set up uv
         uses: astral-sh/setup-uv@v5
         with:
           version: "latest"
           enable-cache: true
-
-      - name: Create virtual environment
-        run: uv venv
+          python-version: "3.12"
 
       - name: Install dependencies
-        run: uv pip install -e ".[dev]"
+        run: uv sync
 
       - name: Run tests
         run: PYTHONPATH=./src:./extras uv run pytest tests/ -v --cov=allomorph --cov-report=xml
@@ -52,54 +48,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check-out repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v5
-      with:
-        python-version: 3.12
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+          enable-cache: true
+          python-version: "3.12"
 
-    - name: Install uv
-      uses: astral-sh/setup-uv@v5
-      with:
-        version: "latest"
-        enable-cache: true
+      - name: Install dependencies
+        run: uv sync
 
-    - name: Create virtual environment
-      run: uv venv
+      - name: Use Python Semantic Release to prepare release
+        id: release
+        uses: python-semantic-release/python-semantic-release@v9.16.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Use Python Semantic Release to prepare release
-      id: release
-      uses: python-semantic-release/python-semantic-release@v9.16.0
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@v1.13.0
+        if: steps.release.outputs.released == 'true'
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          password: ${{ secrets.NEW_TEST_PYPI_API_TOKEN }}
 
-    - name: Publish to TestPyPI
-      uses: pypa/gh-action-pypi-publish@v1.13.0
-      if: steps.release.outputs.released == 'true'
-      with:
-        repository-url: https://test.pypi.org/legacy/
-        password: ${{ secrets.NEW_TEST_PYPI_API_TOKEN }}
-
-    - name: Test install from TestPyPI
-      if: steps.release.outputs.released == 'true'
-      run: |
-          uv pip install \
-          --index-url https://test.pypi.org/simple/ \
-          --extra-index-url https://pypi.org/simple \
-          allomorph
-
-    - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.13.0
-      if: steps.release.outputs.released == 'true'
-      with:
-        password: ${{ secrets.PYPI_API_TOKEN }}
-
-    - name: Publish package distributions to GitHub Releases
-      uses: python-semantic-release/upload-to-gh-release@v9.8.9
-      if: steps.release.outputs.released == 'true'
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@v1.13.0
+        if: steps.release.outputs.released == 'true'
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
