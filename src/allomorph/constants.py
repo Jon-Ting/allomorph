@@ -41,13 +41,13 @@ ELE_DICT = {
            "rho": 10490, "m": 0.107868, "bulkE": 2.95},
 }
 
-DIAMETER_LIST = [10, 15, 20, 25, 30]  # NP diameters of interest (Angstrom)
+DIAMETER_LIST = [10, 15, 20]  # NP diameters of interest (Angstrom)
 SHAPE_LIST = ["OT", "SP", "IC", "CU", "DH", "TH", "RD", "TO", "CO"]  # Shapes of interest
 BNP_DISTRIB_LIST = ["L10", "RAL", "RCS"]  # BNP distributions of interest
 TNP_DISTRIB_LIST = [
     "L10R", "CS", "CL10S", "CRALS", "RRAL", "CSRAL", "CSL10", "CRSR", "LL10"
 ]  # TNP distributions of interest
-RATIO_LIST = [20, 40, 60, 80]  # Ratios of interest
+RATIO_LIST = [20, 40]  # Ratios of interest
 CUSTOM_SHAPES = {}  # User-defined custom shapes
 
 
@@ -96,25 +96,25 @@ def load_config(path):
 
     suffix = Path(path).suffix.lower()
     if suffix == ".json":
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     elif suffix in (".yaml", ".yml"):
         try:
             import yaml
-            with open(path, "r") as f:
+            with open(path, "r", encoding="utf-8") as f:
                 return yaml.safe_load(f)
-        except ImportError:
-            raise ImportError("PyYAML is required to load YAML config files.")
+        except ImportError as e:
+            raise ImportError("PyYAML is required to load YAML config files.") from e
     elif suffix == ".toml":
         try:
             import tomllib  # Python 3.11+
         except ImportError:
             try:
                 import tomli as tomllib
-            except ImportError:
+            except ImportError as e:
                 raise ImportError(
                     "tomllib (Python 3.11+) or tomli is required to load TOML config files."
-                )
+                ) from e
         with open(path, "rb") as f:
             return tomllib.load(f)
     else:
@@ -158,7 +158,7 @@ def load_ele_dict_from_file(path):
     """
     import json
 
-    with open(path, "r") as f:
+    with open(path, "r", encoding="utf-8") as f:
         ele_dict = json.load(f)
     return validate_ele_dict(ele_dict)
 

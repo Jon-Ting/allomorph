@@ -48,8 +48,12 @@ htmlcov/
 *.pkl
 *.zip
 *.exe
+*.ipynb_checkpoints
+MNP/
+BNP/
+TNP/
 
-# Legacy directories (kept for backwards compatibility)
+# Legacy directories
 InitStruct/*NP/
 InitStruct/*log*
 MDsim/*.log
