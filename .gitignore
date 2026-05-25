@@ -42,6 +42,7 @@ htmlcov/
 # Generated artefacts
 *.lmp
 *.xyz
+*.mod
 *.log
 *.csv
 *.pickle
@@ -56,14 +57,6 @@ TNP/
 docs/_build/
 docs/_static/
 docs/_templates/
-
-# Legacy directories
-InitStruct/*NP/
-InitStruct/*log*
-MDsim/*.log
-FeatExtEng/__pycache__/
-FeatExtEng/*.log
-FeatExtEng/NCPac/*.mod
 
 # AI Assistants
 .agents/
