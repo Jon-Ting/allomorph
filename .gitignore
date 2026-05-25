@@ -53,6 +53,8 @@ MNP/
 BNP/
 TNP/
 docs/_build/
+docs/_static/
+docs/_templates/
 
 # Legacy directories
 InitStruct/*NP/
