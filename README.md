@@ -6,7 +6,7 @@
 
 AlloMorph is a Python toolkit for generating initial structural models of monometallic, bimetallic, and trimetallic nanoparticles. It is designed to create large-scale datasets for atomistic simulations and machine learning applications.
 
-![](https://raw.githubusercontent.com/Jon-Ting/allmorph/main/docs/figs/TNPs_generation_flowchart.png)
+![](https://github.com/Jon-Ting/allomorph/blob/main/docs/figs/TNPs_generation_flowchart.png)
 
 ---
 
