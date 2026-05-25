@@ -1,6 +1,9 @@
 # CHANGELOG
 
 
+## v0.3.0 (2026-05-25)
+
+
 ## v0.2.0 (2026-05-25)
 
 ### Bug Fixes
@@ -10,6 +13,9 @@
 
 - Regenerate uv.lock to resolve parsing error
   ([`cc942aa`](https://github.com/Jon-Ting/allomorph/commit/cc942aabb3b3e6566bf5aa02291dcdd3a15c549b))
+
+- Use sudo to remove attestations
+  ([`e81f270`](https://github.com/Jon-Ting/allomorph/commit/e81f2704a0048d650da8b7c9ec1282992240602a))
 
 ### Build System
 
@@ -165,6 +171,9 @@ Signed-off-by: dependabot[bot] <support@github.com>
 
 - Add Dependabot auto-merge workflow
   ([`a9a17e4`](https://github.com/Jon-Ting/allomorph/commit/a9a17e43547507c123252e190e38becb74181dda))
+
+- Add FUNDING.yml for sponsorship options
+  ([`ef91342`](https://github.com/Jon-Ting/allomorph/commit/ef9134245baaed804e273b7c8225842765e100bb))
 
 - Clean up ci-cd.yml by removing unused environment variable and streamlining steps
   ([`e506ebe`](https://github.com/Jon-Ting/allomorph/commit/e506ebe15b80bb28e3c8e8f2adb525804dbb39c5))
