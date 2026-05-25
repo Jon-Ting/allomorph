@@ -69,7 +69,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Publish to TestPyPI
-      uses: pypa/gh-action-pypi-publish@v1.12.3
+      uses: pypa/gh-action-pypi-publish@v1.13.0
       if: steps.release.outputs.released == 'true'
       with:
         repository-url: https://test.pypi.org/legacy/
@@ -83,7 +83,7 @@ jobs:
           allomorph
 
     - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.12.3
+      uses: pypa/gh-action-pypi-publish@v1.13.0
       if: steps.release.outputs.released == 'true'
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}
