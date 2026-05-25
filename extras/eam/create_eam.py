@@ -17,7 +17,7 @@ from pathlib import Path
 
 import numpy as np
 
-from allomorph.eam.eam_database import Database
+from eam.eam_database import Database
 
 logger = logging.getLogger(__name__)
 

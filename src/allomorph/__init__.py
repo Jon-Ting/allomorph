@@ -1,12 +1,7 @@
-"""Nanoparticle generation toolkit.
+"""Nanoparticle structure generation toolkit.
 
 A package for generating monometallic to trimetallic nanoparticle structural
-datasets for machine learning applications, including:
-
-- Initial structure generation (monometallic, bimetallic, trimetallic)
-- EAM potential file creation
-- Molecular dynamics simulation pipeline
-- Feature extraction and dataset merging
+datasets for machine learning applications.
 """
 
 __version__ = "0.1.0"
@@ -29,8 +24,6 @@ from allomorph.constants import (
     parse_ele_comb,
     validate_ele_dict,
 )
-from allomorph.eam.create_eam import create_eam
-from allomorph.eam.eam_database import AtType, Database
 from allomorph.init_struct.gen_bnp_al import gen_bnp, write_bnp
 from allomorph.init_struct.gen_bnp_cs import gen_hard_core_shell, write_hard_core_shell
 from allomorph.init_struct.gen_mnp import gen_mnp, write_mnp
@@ -38,9 +31,6 @@ from allomorph.init_struct.gen_tnp_al import gen_tnp, write_tnp
 
 __all__ = [
     "__version__",
-    "AtType",
-    "Database",
-    "create_eam",
     "LMP_DATA_DIR",
     "MNP_DIR",
     "BNP_DIR",
