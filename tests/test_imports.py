@@ -17,7 +17,7 @@ def test_import_constants():
 
 
 def test_import_eam():
-    from allomorph.eam import Database
+    from eam import Database
 
     assert "Au" in Database
     assert "Pd" in Database
@@ -43,7 +43,7 @@ def test_import_init_struct():
 
 
 def test_import_feat_ext_eng():
-    from allomorph.feat_ext_eng import (
+    from feat_ext_eng import (
         concat_np_feats,
         merge_reformat_data,
         run_ncpac,
