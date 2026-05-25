@@ -104,7 +104,7 @@ def write_hard_core_shell(replace=False, vis=False, ele_dict=None):
                             write_lammps_data(str(output_path), atoms=bnp, units='metal', atom_style='atomic')
 
                             if vis:
-                                view(bnp)
+                                view(bnp, block=True)
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

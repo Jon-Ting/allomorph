@@ -232,7 +232,7 @@ def write_mnp(element, diameter, lat_const, shape, replace=False, vis=False, cus
 
     print(f"      Generated {file_name_lmp}, diameter: {box_size[0]:.1f} A, size: {mnp.get_global_number_of_atoms()} atoms")
     if vis:
-        view(mnp)
+        view(mnp, block=True)
 
 
 def main(replace=False, vis=False, ele_dict=None):

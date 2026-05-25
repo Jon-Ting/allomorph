@@ -210,7 +210,7 @@ def write_tnp(element1, element2, element3, diameter, shape, ele1Ratio, ele2Rati
         print(f"          Generated {file_name_tnp}, formula: {tnp.get_chemical_formula()}")
 
         if vis:
-            view(tnp)
+            view(tnp, block=True)
         if distrib1 == 'L10' and distrib2 == 'L10':
             break
 

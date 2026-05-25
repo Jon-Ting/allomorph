@@ -125,7 +125,7 @@ def write_bnp(element1, element2, diameter, shape, ratio2, distrib, replace=Fals
         print(f"      Generated {file_name_bnp}, formula: {bnp.get_chemical_formula()}")
 
         if vis:
-            view(bnp)
+            view(bnp, block=True)
         if 'R' not in distrib:
             break
 
