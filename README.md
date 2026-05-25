@@ -1,6 +1,6 @@
 # AlloMorph
 
-Toolkit for generating monometallic to trimetallic nanoparticle structural datasets for machine learning applications.
+AlloMorph is a Python toolkit for generating initial structural models of monometallic, bimetallic, and trimetallic nanoparticles. It is designed to create large-scale datasets for atomistic simulations and machine learning applications.
 
 ---
 
@@ -10,8 +10,8 @@ This package uses [uv](https://docs.astral.sh/uv/) for dependency management and
 
 ```bash
 # Clone the repository
-git clone https://github.com/jonathan-ting/allomorph.git
-cd allomorph
+git clone https://github.com/jonathan-ting/tnp-gen.git
+cd tnp-gen
 
 # Create a virtual environment and install dependencies
 uv venv
@@ -21,127 +21,69 @@ uv pip install -e ".[dev]"
 Alternatively, you can install directly with pip:
 
 ```bash
-pip install -e ".[dev]"
+pip install allomorph
 ```
 
 ---
 
 ## CLI Usage
 
-After installation, the `allomorph` command is available:
+The core `allomorph` command provides a streamlined interface for structure generation:
 
 ```bash
-# Create EAM potential files
-allomorph eam -n Au Pt Pd
-
-# Generate initial structures (all stages)
+# Generate a full suite of nanoparticles (MNP, BNP, TNP)
 allomorph init-struct --stage all
 
 # Generate only monometallic nanoparticles
 allomorph init-struct --stage mnp
 
-# Generate bimetallic nanoparticles with overwrite
-allomorph init-struct --stage bnp --replace
+# Generate bimetallic nanoparticles with visual check (ASE GUI)
+allomorph init-struct --stage bnp --vis
 ```
 
 ---
 
-## Package structure
+## Core Package Structure
 
-- `allomorph.eam` — EAM (Embedded Atom Method) potential file creation
-- `allomorph.init_struct` — Initial nanoparticle structure generation (monometallic, bimetallic, trimetallic)
-- `allomorph.md_sim` — Molecular dynamics simulation pipeline (LAMMPS input generation, job management)
-- `allomorph.feat_ext_eng` — Feature extraction and dataset engineering (NCPac integration)
+- `allomorph.init_struct` — Generation logic for monometallic, bimetallic, and trimetallic structures.
+- `allomorph.constants` — Physical constants, element properties, and global configuration.
 
 ---
 
-## Project resources
+## Project Extras & Research Tools
 
-- **InitStruct**: LAMMPS, Python, and Bash scripts for generating nanoparticle initial structures (.lmp format).
-- **EAM**: Modified LAMMPS tools and databases for generating interatomic potential files required for LAMMPS scripts execution.
-- **MDsim**: LAMMPS templates and Bash scripts for tasks related to molecular dynamics (MD) simulations.
-- **FeatExtEng**: Source code and configuration for the Network Characterisation Package (NCPac) used for feature extraction.
+While the core `allomorph` package focuses on structure generation, this repository includes additional tools and legacy resources used in the original research pipeline:
+
+### 1. Research Extras (`extras/`)
+These are standalone Python modules for managing the full simulation lifecycle:
+- `extras/eam/` — Creation of EAM alloy potential files.
+- `extras/md_sim/` — Management of LAMMPS simulations and HPC job submission.
+- `extras/feat_ext_eng/` — Integration with NCPac for structural feature extraction.
+
+### 2. Physical Resources
+- **InitStruct**: LAMMPS and Bash scripts for alternative structure generation workflows.
+- **EAM**: Reference databases and tools for interatomic potentials.
+- **MDsim**: LAMMPS templates and scripts for simulation orchestration.
+- **FeatExtEng**: Source code and configuration for NCPac.
 
 ---
 
-## Instructions to use the repository
-- The toolkit is designed to generate nanoparticles with configurable degrees of freedom.
-- It is optimized for high-performance computing (HPC) environments such as Gadi of National Computational Infrastructure (NCI).
+## Degrees of Freedom
 
-## Degrees of freedom of nanoparticles generated
-- **Elemental composition:** Configurable (default: Au, Pt, Pd). Supports 1–3 arbitrary metallic elements.
-- **Size:** Configurable diameter list (default: 10, 15, 20, 25, 30 Å)
-- **Shape:** Cube (CU), Tetrahedron (TH), Rhombic Dodecahedron (RD), Octahedron (OT), Truncated Octahedron (TO), Cuboctahedron (CO), Decahedron (DH), Icosahedron (IC), Sphere (SP)
-- **Ratio:** i:j:k where i, j, k are from {20, 40, 60, 80}, with constraint i+j+k == 100
-- **Atomic ordering (BNP):**
-    - L10: L1_0 ordered alloy
-    - RAL: Randomly distributed alloy
-    - RCS: Randomly distributed core-shell-like alloy
-- **Atomic ordering (TNP):**
-    - L10R: ordered alloy with randomly distributed M3 (o-M1M2-M3)
-    - CS: inner-core@core@shell (M1@M2@M3)
-    - CL10S: ordered-core@shell (o-M1M2@M3)
-    - CRALS: random-core@shell (M1M2@M3)
-    - RRAL: random solid solution (M1M2M3)
-    - CSRAL: core@random-shell (M1@M2M3)
-    - CSL10: core@ordered-shell (M1@o-M2M3)
-    - CRSR: core@shell with randomly distributed M3 (M1M2@M2M3)
-    - LL10: ordered intermetallic solution (o-M1M2M3)
+AlloMorph supports a wide range of configurable parameters:
+
+- **Elemental composition:** Supports 1–3 arbitrary metallic elements (e.g., Au, Pt, Pd, Cu, Ni, Ag).
+- **Size:** Configurable diameter range (default: 10–30 Å).
+- **Shape:** CU (Cube), TH (Tetrahedron), RD (Rhombic Dodecahedron), OT (Octahedron), TO (Truncated Octahedron), CO (Cuboctahedron), DH (Decahedron), IC (Icosahedron), SP (Sphere).
+- **Ratio:** Arbitrary stoichiometric ratios (e.g., 20:40:40).
+- **Atomic ordering:**
+    - **BNP**: L10 (Ordered), RAL (Random), RCS (Random Core-Shell).
+    - **TNP**: L10R, CS, CL10S, CRALS, RRAL, CSRAL, CSL10, CRSR, LL10.
 
 ---
 
 ## Future Enhancements
 
-- **Support >3 metals:** Extend the combinatorial generation logic beyond trimetallic (quadrimetallic, etc.).
-- **Non-FCC lattice support:** Support for BCC, HCP, and other lattice types.
-- **HDF5 / ASE trajectory output:** Support for modern trajectory and structure formats in addition to LAMMPS `.lmp` files.
-
----
-
-### Generation of TNP initial structures
-1. Modify the variables in the files below under ./InitStruct/ to generate other combinations:
-    - constants.py
-        - {DIAMETER_LIST}: NP diameters (Angstrom)
-        - {RATIO_LIST}: Percentage of each element (only ratio combinations that add up to 100% will be generated)
-        - {RANDOM_DISTRIB_NO}: Number of replicas for atomic orderings involving random distribution
-        - {VACUUM_THICKNESS}: Size of the box containing the NP (need to be >= greatest diameter in {DIAMETER_LIST})
-    - genBNPCS.sh
-        - {SIZE_ARR}: NP diameters (Angstrom)
-    - genTNPCS*.sh
-        - Last three arguments representing NP diameters (Angstrom) of each component when calling the functions in these scripts
-        - {RATIO_LIST}: Percentage of each element (only ratio combinations that add up to 100% will be generated)
-        - {RANDOM_DISTRIB_NO}: Number of replicas for atomic orderings involving random distribution
-        - *Note: Some NPs that are supposed to be TNPs turned out to be BNP due to overly large overlap cutoff in genTNPCS*.sh.
-2. Run genMBTNPs.sh to generate the TNPs to be simulated.
-
-### Simulation of TNPs
-#### Stages of simulations
-- S0: Short equilibration of TNPs
-- S1: Heating up of TNPs, saving configurations along the way
-- S2: Short equilibration of the saved TNP configurations at the saved temperature
-
-#### Instructions:
-1. Go to ./MDsim/
-2. Modify the path in setupMDsim.sh as appropriate and run it. This places each .lmp file into a unique directory in the specified path to store the simulation data, while initialising a config.yml file that stores the simulation progress/status for each directory.
-3. Check that parameters that are not variables in annealS{0/1/2}.in LAMMPS script templates are appropriate according to your simulation goals.
-4. Modify the paths and parameters in genAnnealIn.sh as appropriate and run it, taking simulation stage number as argument {0, 1, 2}.
-5. Generate 3 files at the path specified in setupMDsim.sh {'jobList', 'queueList', 'runList'}
-5. Modify the path in jobList.sh as appropriate and run it, taking simulation stage number as argument {0, 1, 2}. This script:
-    - places jobs (LAMMPS running of *S{0/1/2}.in) that are ready to be run by the HPC into 'jobList'.
-    - needs to be rerun after the jobs are finished (until all jobs are done), to:
-        - update the progress of the simulations by updating config.yml in the TNP directory (whether each stage is done), and 
-        - update the status of the jobs (whether it's submitted, queuing, or running) by updating 'jobList', 'queueList', and 'runList'
-        - place the job for next stage of simulation into 'jobList'.
-6. Modify the parameters in runAnneal.sh and subAnneal.sh, and run subAnneal.sh. This script:
-    - submits {maxQueueNum} of job scripts listed in 'jobList' to the HPC. 
-    - Once a job finishes, it will automatically submit the next job from 'jobList', keeping the number of jobs submitted the same (i.e. {maxQueueNum}) until there are no more jobs in 'jobList'.
-- * delJobs.sh and rmOutFiles.sh are provided to ease the debugging/cleaning process.
-- * Remember to backup your simulation data to elsewhere when they are done.
-
-### Feature extraction of TNPs
-1. Go to ./FeatExtEng/
-2. Modify the paths and parameters in genCSVs.py as appropriate.
-3. Submit runGenDAPdata.sh to the HPC. This will generate:
-    - {MDout.csv}, which contains the output of MD simulations of all TNPs.
-    - {features.csv}, which contains the features extracted by NCPac for all TNPs.
-4. Modify the parameters in mergeFeatures.py and run it. This will merge the information from the 2 csv files and generate a new {AuPtPd_nanoparticle_dataset.csv} following the format of dataset stored on CSIRO's Data Access Portal, such as https://data.csiro.au/collection/csiro:40669 (gold nanoparticle).
+- **Support >3 metals:** Extend logic to quadrimetallic and beyond.
+- **Non-FCC lattice support:** Support for BCC, HCP, and other lattices.
+- **Modern Formats:** Support for HDF5 and ASE trajectory outputs.
