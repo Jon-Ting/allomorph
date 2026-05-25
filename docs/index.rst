@@ -1,4 +1,5 @@
-# Welcome to allomorph
+Welcome to AlloMorph
+====================
 
 .. toctree::
    :maxdepth: 2
@@ -9,9 +10,10 @@
    api
    configuration
 
-`allomorph` is a toolkit for generating monometallic to trimetallic nanoparticle structural datasets for machine learning.
+`AlloMorph` is a toolkit for generating monometallic to trimetallic nanoparticle structural datasets for machine learning.
 
-## Key Features
+Key Features
+------------
 
 - **Initial Structure Generation**: Generate monometallic (MNP), bimetallic (BNP), and trimetallic (TNP) nanoparticles with configurable shapes and atomic distributions.
 - **Configurable Elements**: Support arbitrary metallic elements via an overridable element-property dictionary.
@@ -19,17 +21,17 @@
 - **Feature Extraction**: Extract structural features from nanoparticles using NCPac and MD outputs.
 - **Modular Design**: Clean Python API and CLI for easy integration into workflows.
 
-## Quick Start
+Quick Start
+------------
 
-```bash
-# Generate structures (all stages: MNP, BNP, CS, TNP)
-allomorph init-struct --stage all
+.. code-block:: bash
+   # Generate structures (all stages: MNP, BNP, CS, TNP)
+   allomorph init-struct --stage all
 
-# Or generate only monometallic nanoparticles
-allomorph init-struct --stage mnp
+   # Or generate only monometallic nanoparticles
+   allomorph init-struct --stage mnp
 
-# Setup MD simulations
-allomorph md-sim setup --init-dir InitStruct/TNP --target-dir MDsim_runs
-```
+   # Setup MD simulations
+   allomorph md-sim setup --init-dir InitStruct/TNP --target-dir MDsim_runs
 
-For more details, see the [Installation](installation.md) and [Usage](usage.md) guides.
+For more details, see the :doc:`installation` and :doc:`usage` guides.
