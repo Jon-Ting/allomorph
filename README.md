@@ -1,5 +1,7 @@
 # AlloMorph
 
+[![ci-cd](https://github.com/Jon-Ting/allomorph/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/Jon-Ting/allomorph/actions/workflows/ci-cd.yml)
+
 ---
 
 ## Description
