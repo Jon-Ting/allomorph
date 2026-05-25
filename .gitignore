@@ -49,6 +49,7 @@ htmlcov/
 *.zip
 *.exe
 *.ipynb_checkpoints
+*.xml
 MNP/
 BNP/
 TNP/
