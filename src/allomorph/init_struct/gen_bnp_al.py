@@ -19,7 +19,7 @@ from pathlib import Path
 import numpy as np
 from ase.io.lammpsdata import read_lammps_data, write_lammps_data
 from ase.visualize import view
-from numpy.random import RandomState, rand, seed
+from numpy.random import RandomState
 
 from allomorph.constants import (
     BNP_DIR,
@@ -56,6 +56,7 @@ def rand_conv(obj, element1, element2, ele2Ratio, rseed, prob):
 
 
 def gen_bnp(obj, element1, element2, shape, ratio2, distrib, rseed, ele_dict=None):
+    """Generates a BNP alloy structure based on specified distribution type."""
     if ele_dict is None:
         ele_dict = ELE_DICT
     probList = []

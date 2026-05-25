@@ -43,6 +43,7 @@ from allomorph.constants import (
 
 
 def _build_cu(diameter, element, latConst):
+    """Build a cubic nanoparticle."""
     estLatNo = diameter / latConst
     latNoCU = round(estLatNo)
     return FaceCenteredCubic(
@@ -54,6 +55,7 @@ def _build_cu(diameter, element, latConst):
 
 
 def _build_rd(diameter, element, latConst):
+    """Build a rhombic dodecahedral nanoparticle."""
     estLatNo = diameter / latConst
     latNoCU = round(estLatNo)
     if latNoCU % 2 == 0:
@@ -69,6 +71,7 @@ def _build_rd(diameter, element, latConst):
 
 
 def _build_th(diameter, element, latConst):
+    """Build a tetrahedral nanoparticle."""
     edgeAtomNoTH = round(1 + 2 * diameter / latConst)
     diagLayerNoTH = edgeAtomNoTH + 2
     return FaceCenteredCubic(
@@ -87,6 +90,7 @@ def _build_th(diameter, element, latConst):
 
 
 def _build_ot(diameter, element, latConst):
+    """Build an octahedral nanoparticle."""
     edgeLengthOT = diameter / sqrt(2)
     edgeAtomNoOT = 1 + round(edgeLengthOT / (latConst / sqrt(2)))
     return Octahedron(
@@ -99,6 +103,7 @@ def _build_ot(diameter, element, latConst):
 
 
 def _build_to(diameter, element, latConst):
+    """Build a truncated octahedral nanoparticle."""
     compLayerNo = diameter // latConst
     if compLayerNo % 2 == 0:
         cutLayerNoTO = compLayerNo / 2
@@ -115,6 +120,7 @@ def _build_to(diameter, element, latConst):
 
 
 def _build_co(diameter, element, latConst):
+    """Build a cuboctahedral nanoparticle."""
     cutLayerNoCO = round(diameter / latConst)
     edgeAtomNoCO = 2 * cutLayerNoCO + 1
     return Octahedron(
@@ -127,6 +133,7 @@ def _build_co(diameter, element, latConst):
 
 
 def _build_dh(diameter, element, latConst):
+    """Build a decahedral nanoparticle."""
     edgeLengthDH = 2 * diameter * cos(radians(72))
     edgeAtomDistDH = (
         latConst / sqrt(2) * cos(radians(30))
@@ -144,6 +151,7 @@ def _build_dh(diameter, element, latConst):
 
 
 def _build_ic(diameter, element, latConst):
+    """Build an icosahedral nanoparticle."""
     circRadIC = sqrt(diameter ** 2 * (1 + GOLDEN_RATIO ** 2) / (4 * GOLDEN_RATIO ** 2))
     shellNoIC = 1 + round(circRadIC / (latConst / sqrt(2)))
     return Icosahedron(
@@ -154,10 +162,13 @@ def _build_ic(diameter, element, latConst):
 
 
 def _build_sp(diameter, element, latConst):
+    """Build a spherical nanoparticle."""
     # Generate a large cube and cut it into a sphere
     mnp = _build_cu(diameter, element, latConst)
     center = mnp.get_center_of_mass()
-    to_delete = [atom.index for atom in mnp if np.linalg.norm(center - atom.position) > diameter / 2]
+    to_delete = [
+        atom.index for atom in mnp if np.linalg.norm(center - atom.position) > diameter / 2
+    ]
     del mnp[to_delete]
     return mnp
 
@@ -176,7 +187,7 @@ SHAPE_BUILDERS = {
 
 
 def gen_mnp(shape, diameter, element, latConst, custom_shapes=None):
-    """Generate a monometallic nanoparticle using ASE."""
+    """Generates a monometallic nanoparticle structure based on specified shape."""
     if custom_shapes and shape in custom_shapes:
         config = custom_shapes[shape]
         builder_name = config.get("builder", "FaceCenteredCubic")
@@ -227,10 +238,12 @@ def write_mnp(element, diameter, lat_const, shape, replace=False, vis=False, cus
 
     file_name_xyz = f"{element}{diameter}{shape}.xyz"
     output_path_xyz = output_dir / file_name_xyz
-    with open(output_path_xyz, 'w') as f:
+    with open(output_path_xyz, 'w', encoding='utf-8') as f:
         write_xyz(f, [mnp])
 
-    print(f"      Generated {file_name_lmp}, diameter: {box_size[0]:.1f} A, size: {mnp.get_global_number_of_atoms()} atoms")
+    print(
+        f"      Generated {file_name_lmp}, diameter: {box_size[0]:.1f} A, size: {mnp.get_global_number_of_atoms()} atoms"
+    )
     if vis:
         view(mnp, block=True)
 
@@ -251,7 +264,9 @@ def main(replace=False, vis=False, ele_dict=None):
         for element in ele_dict:
             lat_const = ele_dict[element]['lc']['FCC']
             for shape in SHAPE_LIST:
-                work_items.append((element, diameter, lat_const, shape, replace, vis, custom_shapes))
+                work_items.append(
+                    (element, diameter, lat_const, shape, replace, vis, custom_shapes)
+                )
 
     # Run in parallel unless visualization is requested
     if vis:

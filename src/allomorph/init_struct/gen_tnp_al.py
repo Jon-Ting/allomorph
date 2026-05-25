@@ -95,7 +95,10 @@ def _prob_array(prob, indices):
     return None
 
 
-def gen_tnp(obj, element1, element2, element3, ele1Ratio, ele2Ratio, ele3Ratio, distrib1, distrib2, rseed=0, shape=None, ele_dict=None):
+def gen_tnp(
+    obj, element1, element2, element3, ele1Ratio, ele2Ratio, ele3Ratio, distrib1, distrib2, rseed=0, shape=None, ele_dict=None
+):
+    """Generates a TNP alloy structure based on specified distribution types."""
     if ele_dict is None:
         ele_dict = ELE_DICT
     prob_list = []
