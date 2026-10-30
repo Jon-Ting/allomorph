@@ -69,7 +69,7 @@ jobs:
 
       - name: Publish to TestPyPI
         if: steps.release.outputs.released == 'true'
-        uses: pypa/gh-action-pypi-publish@v1.13.0
+        uses: pypa/gh-action-pypi-publish@v1.14.3
         
       # Wipe the generated attestations so the next step can generate its own fresh pair
       - name: Clean up TestPyPI Attestations
@@ -78,4 +78,4 @@ jobs:
 
       - name: Publish to PyPI
         if: steps.release.outputs.released == 'true'
-        uses: pypa/gh-action-pypi-publish@v1.13.0
+        uses: pypa/gh-action-pypi-publish@v1.14.3
